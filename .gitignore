@@ -1,0 +1,37 @@
+﻿# Build
+bin/
+obj/
+
+# MonoGame content build output
+Content/bin/
+Content/obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userprefs
+
+# Rider
+.idea/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# NuGet
+*.nupkg
+packages/
+
+# Test results
+TestResults/
+
+# Publish
+publish/
+
+# Temporary files
+*.tmp
+*.cache

@@ -37,10 +37,23 @@ namespace MyMonoGame
 
         private void RecalculateTextPosition(string text, SpriteFont font)
         {
-            Vector2 size = font.MeasureString(Text);
+            Vector2 size = font.MeasureString(text);
+            Text = text;
             float x_axis = this.Bounds.X + Bounds.Width / 2 - size.X / 2;
             float y_axis = this.Bounds.Y + Bounds.Height / 2 - size.Y / 2;
             _textPosition = new Vector2(x_axis, y_axis);
+        }
+
+        public void HideButton()
+        {
+            this.IsVisible = false;
+            this.IsEnabled = false;
+        }
+
+        public void ShowButton()
+        {
+            this.IsVisible = true;
+            this.IsEnabled = true;
         }
 
         public void SetVisible(bool visible)
@@ -65,6 +78,11 @@ namespace MyMonoGame
                 IsClicked = IsHovered && leftClicked;
 
                 _previousMouse = mouse;
+            }
+            else
+            {
+                this.IsClicked = false;
+                this.IsHovered = false;
             }
         }
 

@@ -11,6 +11,7 @@ namespace MyMonoGame
 {
     public class MainMenuScreen
     {
+        public bool IsCurrentMenu = true;
         private SpriteFont _font;
         private Texture2D _pixel;
 
@@ -20,23 +21,24 @@ namespace MyMonoGame
         private Button CreatorsButton;
         private Button ExitGameButton;
 
-        public bool StartRequested { get; private set; }
-        public bool LoadRequested { get; private set; }
-        public bool CreatorRequested { get; private set; }
-        public bool ExitRequested { get; private set; }
+        private int WidthMargin = 50;
+        private int HeightMargin = 100;
+        private int MarginBetweenButtons = 20;
+        private int ButtonWidth = 200;
+        private int ButtonHeight = 50;
 
         public MainMenuScreen(SpriteFont font, Texture2D pixel)
         {
             _font = font;
             _pixel = pixel;
-            StartButton = new Button(new Rectangle(100, 130, 200, 50), "Start Game", _font);
-            LoadGameButton = new Button(new Rectangle(100, 200, 200, 50), "Load Game", _font);
-            SettingsButton = new Button(new Rectangle(100, 270, 200, 50), "Settings", _font);
-            CreatorsButton = new Button(new Rectangle(100, 340, 200, 50), "About Game", _font);
-            ExitGameButton = new Button(new Rectangle(100, 410, 200, 50), "Exit", _font);
+            StartButton = new Button(new Rectangle(WidthMargin, HeightMargin, ButtonWidth, ButtonHeight), "Start Game", _font);
+            LoadGameButton = new Button(new Rectangle(WidthMargin, (HeightMargin + ButtonHeight + MarginBetweenButtons), ButtonWidth, ButtonHeight), "Load Game", _font);
+            SettingsButton = new Button(new Rectangle(WidthMargin, (HeightMargin + (ButtonHeight + MarginBetweenButtons) * 2), ButtonWidth, ButtonHeight), "Settings", _font);
+            CreatorsButton = new Button(new Rectangle(WidthMargin, (HeightMargin + (ButtonHeight + MarginBetweenButtons) * 3), ButtonWidth, ButtonHeight), "About Game", _font);
+            ExitGameButton = new Button(new Rectangle(WidthMargin, (HeightMargin + (ButtonHeight + MarginBetweenButtons) * 4), ButtonWidth, ButtonHeight), "Exit", _font);
         }
 
-        public void Update()
+        public string Update()
         {
             StartButton.Update();
             LoadGameButton.Update();
@@ -46,28 +48,37 @@ namespace MyMonoGame
 
             if (StartButton.IsClicked)
             {
+                IsCurrentMenu = false;
                 Console.WriteLine("Start game button clicked!");
+                return "StartGame";
+                
             }
 
             if (LoadGameButton.IsClicked)
             {
+                // IsCurrentMenu = false;
                 Console.WriteLine("Load game button cliced!");
             }
 
             if (SettingsButton.IsClicked)
             {
+                // IsCurrentMenu = false;
                 Console.WriteLine("Settings button clicked!");
             }
 
             if (CreatorsButton.IsClicked)
             {
+                // IsCurrentMenu = false;
                 Console.WriteLine("Creators button clicked!");
             }
 
             if (ExitGameButton.IsClicked)
             {
+                IsCurrentMenu = false;
                 Console.WriteLine("Exit button clicked!");
             }
+
+            return string.Empty;
         }
 
         public void Draw(SpriteBatch spriteBatch)

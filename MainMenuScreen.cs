@@ -14,18 +14,11 @@ namespace MyMonoGame
         private SpriteFont _font;
         private Texture2D _pixel;
 
-        private Rectangle _startButtonRect;
-        private Rectangle _loadButtonRect;
-        private Rectangle _creatorsButtonRect;
-        private Rectangle _exitButtonRect;
-
-
-        private bool _isStartHovered;
-        private bool _isLoadHovered;
-        private bool _isCreatorsHovered;
-        private bool _isExitHovered;
-
-        private MouseState _previousMouse;
+        private Button StartButton;
+        private Button LoadGameButton;
+        private Button SettingsButton;
+        private Button CreatorsButton;
+        private Button ExitGameButton;
 
         public bool StartRequested { get; private set; }
         public bool LoadRequested { get; private set; }
@@ -36,72 +29,54 @@ namespace MyMonoGame
         {
             _font = font;
             _pixel = pixel;
-
-            _startButtonRect = new Rectangle(100, 200, 200, 50);
-            _loadButtonRect = new Rectangle(100, 270, 200, 50);
-            _creatorsButtonRect = new Rectangle(100, 340, 200, 50);
-            _exitButtonRect = new Rectangle(100, 410, 200, 50);
+            StartButton = new Button(new Rectangle(100, 130, 200, 50), "Start Game", _font);
+            LoadGameButton = new Button(new Rectangle(100, 200, 200, 50), "Load Game", _font);
+            SettingsButton = new Button(new Rectangle(100, 270, 200, 50), "Settings", _font);
+            CreatorsButton = new Button(new Rectangle(100, 340, 200, 50), "About Game", _font);
+            ExitGameButton = new Button(new Rectangle(100, 410, 200, 50), "Exit", _font);
         }
 
         public void Update()
         {
-            var mouse = Mouse.GetState();
-            _isStartHovered = _startButtonRect.Contains(mouse.Position);
-            _isLoadHovered = _loadButtonRect.Contains(mouse.Position);
-            _isCreatorsHovered = _creatorsButtonRect.Contains(mouse.Position);
-            _isExitHovered = _exitButtonRect.Contains(mouse.Position);
+            StartButton.Update();
+            LoadGameButton.Update();
+            SettingsButton.Update();
+            CreatorsButton.Update();
+            ExitGameButton.Update();
 
-            bool leftClicked =
-                mouse.LeftButton == ButtonState.Pressed &&
-                _previousMouse.LeftButton == ButtonState.Released;
-
-            if (leftClicked && _isStartHovered)
+            if (StartButton.IsClicked)
             {
-                StartRequested = true;
-                Console.WriteLine("Start button clicked!");
+                Console.WriteLine("Start game button clicked!");
             }
 
-            if (leftClicked && _isLoadHovered)
+            if (LoadGameButton.IsClicked)
             {
-                LoadRequested = true;
-                Console.WriteLine("Load button cliced!");
+                Console.WriteLine("Load game button cliced!");
             }
 
-            if (leftClicked && _isCreatorsHovered)
+            if (SettingsButton.IsClicked)
             {
-                CreatorRequested = true;
+                Console.WriteLine("Settings button clicked!");
+            }
+
+            if (CreatorsButton.IsClicked)
+            {
                 Console.WriteLine("Creators button clicked!");
             }
 
-            if (leftClicked && _isExitHovered)
+            if (ExitGameButton.IsClicked)
             {
-                ExitRequested = true;
                 Console.WriteLine("Exit button clicked!");
             }
-
-            _previousMouse = mouse;
-
-            // логика мыши, hover, click
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            Color startButtonColor = _isStartHovered ? Color.DarkGray : Color.Gray;
-            Color loadButtonColor = _isLoadHovered ? Color.DarkGray : Color.Gray;
-            Color creatorsButtonColor = _isCreatorsHovered ? Color.DarkGray : Color.Gray;
-            Color exitButtonColor = _isExitHovered ? Color.DarkGray : Color.Gray;
-
-            spriteBatch.Draw(_pixel, _startButtonRect, startButtonColor);
-            spriteBatch.Draw(_pixel, _loadButtonRect, loadButtonColor);
-            spriteBatch.Draw(_pixel, _creatorsButtonRect, creatorsButtonColor);
-            spriteBatch.Draw(_pixel, _exitButtonRect, exitButtonColor);
-
-            spriteBatch.DrawString(_font, "Start Game", new Vector2(120, 215), Color.White);
-            spriteBatch.DrawString(_font, "Load Game", new Vector2(120, 285), Color.White);
-            spriteBatch.DrawString(_font, "Creators", new Vector2(120, 355), Color.White);
-            spriteBatch.DrawString(_font, "Exit Game", new Vector2(120, 425), Color.White);
-
-            // рисуем текст, кнопки
+            StartButton.Draw(spriteBatch, _font, _pixel);
+            LoadGameButton.Draw(spriteBatch, _font, _pixel);
+            SettingsButton.Draw(spriteBatch, _font, _pixel);
+            CreatorsButton.Draw(spriteBatch, _font, _pixel);
+            ExitGameButton.Draw(spriteBatch, _font, _pixel);
         }
 
     }

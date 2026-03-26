@@ -12,9 +12,6 @@ namespace MyMonoGame
         private SpriteFont _font;
 
         private Texture2D _pixel;
-        private Rectangle _startButtonRect;
-        private bool _isStartHovered;
-        private MouseState _previousMouse;
         private MainMenuScreen _mainMenuScreen;
 
         public Enigma()

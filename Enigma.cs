@@ -12,6 +12,7 @@ namespace MyMonoGame
         private SpriteFont _font;
 
         private Texture2D _pixel;
+        private BaseMenu _currentScreen;
         private MainMenuScreen _mainMenuScreen;
         private CharacterMenuScreen _characterMenuScreen;
 
@@ -35,9 +36,9 @@ namespace MyMonoGame
             _font = Content.Load<SpriteFont>("DefaultFont");
             _pixel = new Texture2D(GraphicsDevice, 1, 1);
             _pixel.SetData(new[] { Color.White });
-            _mainMenuScreen = new MainMenuScreen(_font, _pixel);
-            _characterMenuScreen = new CharacterMenuScreen(_font, _pixel, GraphicsDevice.Viewport.Height, GraphicsDevice.Viewport.Width);
-
+            _mainMenuScreen = new MainMenuScreen("Main menu", GraphicsDevice.Viewport.Height, GraphicsDevice.Viewport.Width, _font, _pixel);
+            _characterMenuScreen = new CharacterMenuScreen("Character menu", GraphicsDevice.Viewport.Height, GraphicsDevice.Viewport.Width, _font, _pixel);
+            _currentScreen = _mainMenuScreen;
 
             // TODO: use this.Content to load your game content here
         }
@@ -46,56 +47,42 @@ namespace MyMonoGame
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            var clickedButton = string.Empty;
-            if (_mainMenuScreen.IsCurrentMenu)
-            {
-                clickedButton = _mainMenuScreen.Update();
-                SwitchMenu(clickedButton);
-            }
-            
-            else if (_characterMenuScreen.IsCurrentMenu) 
-            {
-                clickedButton = _characterMenuScreen.Update();
-                SwitchMenu(clickedButton);
-            }
+            var action = _currentScreen.Update();
+            SwitchMenu(action);
 
             // TODO: Add your update logic here
 
             base.Update(gameTime);
         }
 
-        private void SwitchMenu(string pressedButton)
+        private void SwitchMenu(ScreenAction action)
         {
-            if (string.IsNullOrEmpty(pressedButton)) { return; }
-            switch (pressedButton)
+            if (action == ScreenAction.None) { return; } 
+            switch (action)
             {
-                case "StartGame":
-                    _mainMenuScreen.IsCurrentMenu = false;
-                    _characterMenuScreen.IsCurrentMenu = true;
+                case ScreenAction.GoToMainMenu:
+                    _currentScreen = _mainMenuScreen;
                     break;
-                case "GoToMainMenu":
-                    _mainMenuScreen.IsCurrentMenu = true;
-                    _characterMenuScreen.IsCurrentMenu = false;
+                case ScreenAction.GoToLoadGameMenu:
+                    break;
+                case ScreenAction.GoToCharacterMenu:
+                    _currentScreen = _characterMenuScreen;
+                    break;
+                case ScreenAction.GoToSettingsMenu:
+                    break;
+                case ScreenAction.ExitGame:
                     break;
                 default:
                     break;
             }
+
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin();
-
-            if (_mainMenuScreen.IsCurrentMenu)
-            {
-                _mainMenuScreen.Draw(_spriteBatch);
-            }
-            else if (_characterMenuScreen.IsCurrentMenu)
-            {
-                _characterMenuScreen.Draw(_spriteBatch);
-            }
-
+            _currentScreen.Draw(_spriteBatch);
             _spriteBatch.End();
 
             // TODO: Add your drawing code here

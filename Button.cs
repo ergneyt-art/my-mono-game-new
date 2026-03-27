@@ -11,8 +11,9 @@ namespace MyMonoGame
 {
     public class Button
     {
-        public Rectangle Bounds;
-        public string Text;
+        private Rectangle Bounds;
+        public string Text { get; private set; }
+        public ScreenAction Action { get; private set; }
 
         public bool IsVisible { get; private set; } = true;
         public bool IsEnabled { get; private set; } = true;
@@ -27,11 +28,11 @@ namespace MyMonoGame
 
         private MouseState _previousMouse;
 
-        public Button(Rectangle bounds, string text, SpriteFont font)
+        public Button(Rectangle bounds, ScreenAction action, string text, SpriteFont font)
         {
             Bounds = bounds;
             Text = text;
-            Vector2 size = font.MeasureString(Text);
+            Action = action;
             RecalculateTextPosition(text, font);
         }
 
@@ -66,7 +67,7 @@ namespace MyMonoGame
             this.IsEnabled = enabled;
         }
 
-        public void Update() 
+        public ScreenAction Update() 
         {
             if (this.IsVisible && this.IsEnabled)
             {
@@ -75,15 +76,16 @@ namespace MyMonoGame
 
                 bool leftClicked = mouse.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released;
 
-                IsClicked = IsHovered && leftClicked;
-
                 _previousMouse = mouse;
+
+                if (IsHovered && leftClicked) return Action;
             }
             else
             {
                 this.IsClicked = false;
                 this.IsHovered = false;
             }
+            return ScreenAction.None;
         }
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font, Texture2D pixel)

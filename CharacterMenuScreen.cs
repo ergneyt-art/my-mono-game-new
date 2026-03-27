@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,183 +11,101 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace MyMonoGame
 {
-    public class CharacterMenuScreen
+    public class CharacterMenuScreen : BaseMenu
     {
-        private string Title;
+        private Dictionary<string, CharacterSlotUI> _charSlots;
+        private Dictionary<string, Button> _otherButtons;
 
-        public bool IsCurrentMenu;
+        private int buttonWidth = 100;
+        private int buttonHeight = 50;
+        private int startX = 5;
+        private int startY = 5;
+        private int spacing = 10;
 
-        private SpriteFont _font;
-        private Texture2D _pixel;
-
-        private Character CharacterSlotOne;
-        private Character CharacterSlotTwo;
-        private Character CharacterSlotThree;
-        private Character CharacterSlotFour;
-
-        private Button CreateCharOnSlotOne;
-        private Button CreateCharOnSlotTwo;
-        private Button CreateCharOnSlotThree;
-        private Button CreateCharOnSlotFour;
-
-        private Button ChangeCharOnSlotOne;
-        private Button ChangeCharOnSlotTwo;
-        private Button ChangeCharOnSlotThree;
-        private Button ChangeCharOnSlotFour;
-
-        private Button BackButton;
-        private Button StartButton;
-
-        private int ButtonWidthMarginPercent = 5;
-        private int ButtonHeightMarginPercent = 5;
-        private int ButtonWidthPercent = 16;
-        private int ButtonHeightPercent = 6;
-
-        public CharacterMenuScreen(SpriteFont font, Texture2D pixel, int windowHeight, int windowWeight)
+        public CharacterMenuScreen(string title, int windowHeight, int windowWeight, SpriteFont font, Texture2D pixel) : base(title, windowHeight, windowWeight, font, pixel)
         {
-            Title = "Character menu";
-            _font = font;
-            _pixel = pixel;
+            _otherButtons = new Dictionary<string, Button>();
+            _charSlots = new Dictionary<string, CharacterSlotUI>();
 
-            var buttonWidth = (windowWeight / 100) * ButtonWidthPercent;
-            var buttonHeight = (windowWeight / 100) * ButtonHeightPercent;
-
-            var buttonMarginWidth = (windowWeight / 100) * ButtonWidthMarginPercent;
-            var buttonMarginHeight = (windowWeight / 100) * ButtonHeightMarginPercent;
-
-            var buttonsX_axis = buttonMarginWidth;
-            var buttonsY_axis = buttonMarginHeight;
-
-            BackButton = new Button(
-                new Rectangle(
-                buttonsX_axis,
-                buttonsY_axis,
-                buttonWidth,
-                buttonHeight), "Back", _font);
-
-            buttonsY_axis = windowHeight - buttonMarginHeight - buttonHeight;
-
-            StartButton = new Button(
-                new Rectangle(
-                    (windowWeight / 2) - (buttonWidth / 2), 
-                    buttonsY_axis,
-                    buttonWidth,
-                    buttonHeight), "Start", _font);
-
-            buttonsY_axis = buttonsY_axis - (buttonMarginHeight + buttonHeight);
-
-            CreateCharOnSlotOne = new Button(new Rectangle(buttonsX_axis, buttonsY_axis, buttonWidth, buttonHeight), "Create character", _font);
-            ChangeCharOnSlotOne = new Button(new Rectangle(buttonsX_axis, buttonsY_axis, buttonWidth, buttonHeight), "Change character", _font);
-
-            buttonsX_axis += buttonMarginWidth + buttonWidth;
-
-            CreateCharOnSlotTwo = new Button(new Rectangle(buttonsX_axis, buttonsY_axis, buttonWidth, buttonHeight), "Create character", _font);
-            ChangeCharOnSlotTwo = new Button(new Rectangle(buttonsX_axis, buttonsY_axis, buttonWidth, buttonHeight), "Change character", _font);
-
-            buttonsX_axis += buttonMarginWidth + buttonWidth;
-
-            CreateCharOnSlotThree = new Button(new Rectangle(buttonsX_axis, buttonsY_axis, buttonWidth, buttonHeight), "Create character", _font);
-            ChangeCharOnSlotThree = new Button(new Rectangle(buttonsX_axis, buttonsY_axis, buttonWidth, buttonHeight), "Change character", _font);
-
-            buttonsX_axis += buttonMarginWidth + buttonWidth;
-
-            CreateCharOnSlotFour = new Button(new Rectangle(buttonsX_axis, buttonsY_axis, buttonWidth, buttonHeight), "Create character", _font);
-            ChangeCharOnSlotFour = new Button(new Rectangle(buttonsX_axis, buttonsY_axis, buttonWidth, buttonHeight), "Change character", _font);
+            _otherButtons.Add("Back", new Button(new Rectangle(startX, startY, buttonWidth, buttonHeight), ScreenAction.GoToMainMenu, "Back", _font));
+            startY = windowHeight - spacing;
+            _otherButtons.Add("StartGame", new Button(new Rectangle(startX, startY, buttonWidth, buttonHeight), ScreenAction.StartGame, "StartGame", _font));
+           
+            for (int i = 1; i <= 4; i++)
+            {
+                startX = startX + spacing + buttonWidth;
+                var chairSlot = new CharacterSlotUI()
+                {
+                    CreateButton = new Button(new Rectangle(startX, startY - buttonHeight, buttonWidth, buttonHeight), ScreenAction.AddCharacter, "Add", _font),
+                    ChangeButton = new Button(new Rectangle(startX, startY - buttonHeight, buttonWidth, buttonHeight), ScreenAction.EditCharacter, "Edit", _font),
+                    DeleteButton = new Button(new Rectangle(startX, startY - (buttonHeight * 2 + spacing), buttonWidth, buttonHeight), ScreenAction.DeleteCharacter, "Delete", _font),
+                };
+                _charSlots.Add($"Char{i}", chairSlot);
+            }
 
             ManageButtons();
         }
 
         private void ManageButtons()
         {
-            if (CharacterSlotOne is null && CharacterSlotTwo is null && CharacterSlotThree is null && CharacterSlotFour is null)
+            if (_charSlots is not null && _charSlots.Any(x => x.Value.Character is not null))
             {
-                StartButton.SetEnabled(false);
+                _otherButtons["StartGame"].SetEnabled(true);
+                foreach (var slot in _charSlots)
+                {
+                    if (slot.Value.Character is null)
+                    {
+                        slot.Value.CreateButton.ShowButton();
+                        slot.Value.ChangeButton.HideButton();
+                        slot.Value.DeleteButton.HideButton();
+                    }
+                    else
+                    {
+                        slot.Value.CreateButton.HideButton();
+                        slot.Value.ChangeButton.ShowButton();
+                        slot.Value.DeleteButton.ShowButton();
+                    }
+                }
             }
             else
             {
-                StartButton.SetEnabled(true);
-            }
-
-            if (CharacterSlotOne != null) 
-            {
-                this.CreateCharOnSlotOne.HideButton();
-                this.ChangeCharOnSlotOne.ShowButton();
-            }
-            else
-            {
-                this.CreateCharOnSlotOne.ShowButton();
-                this.ChangeCharOnSlotTwo.HideButton();
-            }
-
-            if (CharacterSlotTwo != null)
-            {
-                this.CreateCharOnSlotTwo.HideButton();
-                this.ChangeCharOnSlotTwo.ShowButton();
-            }
-            else
-            {
-                this.CreateCharOnSlotTwo.ShowButton();
-                this.ChangeCharOnSlotTwo.HideButton();
-            }
-
-            if (this.CharacterSlotThree != null)
-            {
-                this.CreateCharOnSlotThree.HideButton();
-                this.ChangeCharOnSlotThree.ShowButton();
-            }
-            else
-            {
-                this.CreateCharOnSlotThree.ShowButton();
-                this.ChangeCharOnSlotThree.HideButton();
-            }
-
-            if (this.ChangeCharOnSlotFour != null)
-            {
-                this.CreateCharOnSlotFour.HideButton();
-                this.ChangeCharOnSlotFour.ShowButton();
-            }
-            else
-            {
-                this.CreateCharOnSlotFour.ShowButton();
-                this.ChangeCharOnSlotFour.HideButton();
+                _otherButtons["StartGame"].SetEnabled(false);
             }
         }
 
-        public string Update()
+        public override ScreenAction Update()
         {
             ManageButtons();
-            StartButton.Update();
-            BackButton.Update();
-            CreateCharOnSlotOne.Update();
-            ChangeCharOnSlotOne.Update();
-            CreateCharOnSlotTwo.Update();
-            ChangeCharOnSlotTwo.Update();
-            CreateCharOnSlotThree.Update();
-            ChangeCharOnSlotThree.Update();
-            CreateCharOnSlotFour.Update();
-            ChangeCharOnSlotFour.Update();
-
-            if (BackButton.IsClicked)
+            foreach (var button in _otherButtons)
             {
-                IsCurrentMenu = false;
-                return "GoToMainMenu";
+                if (button.Value.Update() != ScreenAction.None) 
+                { 
+                    return button.Value.Action;
+                }
             }
 
-            return string.Empty;
+            foreach (var slot in _charSlots)
+            {
+                if (slot.Value.CreateButton.Update() != ScreenAction.None) { return slot.Value.CreateButton.Action; }
+                else if (slot.Value.ChangeButton.Update() != ScreenAction.None) { return slot.Value.ChangeButton.Action; }
+                else if (slot.Value.DeleteButton.Update() != ScreenAction.None) { return slot.Value.DeleteButton.Action; }
+            }
+            return ScreenAction.None;
         }
 
-        public void Draw(SpriteBatch spriteBatch) 
+        public override void Draw(SpriteBatch spriteBatch) 
         {
-            StartButton.Draw(spriteBatch, _font, _pixel);
-            BackButton.Draw(spriteBatch, _font, _pixel);
-            CreateCharOnSlotOne.Draw(spriteBatch, _font, _pixel);
-            ChangeCharOnSlotOne.Draw(spriteBatch, _font, _pixel);
-            CreateCharOnSlotTwo.Draw(spriteBatch, _font, _pixel);
-            ChangeCharOnSlotTwo.Draw(spriteBatch, _font, _pixel);
-            CreateCharOnSlotThree.Draw(spriteBatch, _font, _pixel);
-            ChangeCharOnSlotThree.Draw(spriteBatch, _font, _pixel);
-            CreateCharOnSlotFour.Draw(spriteBatch, _font, _pixel);
-            ChangeCharOnSlotFour.Draw(spriteBatch, _font, _pixel);
+            SetTitle(spriteBatch);
+            foreach (var button in _otherButtons) 
+            {
+                button.Value.Draw(spriteBatch, _font, _pixel);
+            }
+            foreach(var slot in _charSlots)
+            {
+                slot.Value.CreateButton.Draw(spriteBatch, _font, _pixel);
+                slot.Value.ChangeButton.Draw(spriteBatch, _font, _pixel);
+                slot.Value.DeleteButton.Draw(spriteBatch, _font, _pixel);
+            }
         }
     }
 }

@@ -9,85 +9,44 @@ using System.Threading.Tasks;
 
 namespace MyMonoGame
 {
-    public class MainMenuScreen
+    public class MainMenuScreen : BaseMenu
     {
-        public bool IsCurrentMenu = true;
-        private SpriteFont _font;
-        private Texture2D _pixel;
+        private Dictionary<string, Button> _buttons;
 
-        private Button StartButton;
-        private Button LoadGameButton;
-        private Button SettingsButton;
-        private Button CreatorsButton;
-        private Button ExitGameButton;
+        private int buttonWidth = 100;
+        private int buttonHeight = 50;
+        private int startX = 5;
+        private int startY = 5;
+        private int spacing = 10;
 
-        private int WidthMargin = 50;
-        private int HeightMargin = 100;
-        private int MarginBetweenButtons = 20;
-        private int ButtonWidth = 200;
-        private int ButtonHeight = 50;
-
-        public MainMenuScreen(SpriteFont font, Texture2D pixel)
+        public MainMenuScreen(string title, int windowHeight, int windowWeight, SpriteFont font, Texture2D pixel) : base(title, windowHeight, windowWeight, font, pixel)
         {
-            _font = font;
-            _pixel = pixel;
-            StartButton = new Button(new Rectangle(WidthMargin, HeightMargin, ButtonWidth, ButtonHeight), "Start Game", _font);
-            LoadGameButton = new Button(new Rectangle(WidthMargin, (HeightMargin + ButtonHeight + MarginBetweenButtons), ButtonWidth, ButtonHeight), "Load Game", _font);
-            SettingsButton = new Button(new Rectangle(WidthMargin, (HeightMargin + (ButtonHeight + MarginBetweenButtons) * 2), ButtonWidth, ButtonHeight), "Settings", _font);
-            CreatorsButton = new Button(new Rectangle(WidthMargin, (HeightMargin + (ButtonHeight + MarginBetweenButtons) * 3), ButtonWidth, ButtonHeight), "About Game", _font);
-            ExitGameButton = new Button(new Rectangle(WidthMargin, (HeightMargin + (ButtonHeight + MarginBetweenButtons) * 4), ButtonWidth, ButtonHeight), "Exit", _font);
+            _buttons = new Dictionary<string, Button>();
+
+            _buttons.Add("StartGame", new Button(new Rectangle(startX, startY, buttonWidth, buttonHeight), ScreenAction.GoToCharacterMenu, "Start Game", _font));
+            _buttons.Add("LoadGame", new Button(new Rectangle(startX, startY + (buttonHeight + spacing), buttonWidth, buttonHeight), ScreenAction.GoToLoadGameMenu, "Load Game", _font));
+            _buttons.Add("Settings", new Button(new Rectangle(startX, startY + (buttonHeight + spacing) * 2, buttonWidth, buttonHeight), ScreenAction.GoToSettingsMenu, "Settings", _font));
+            _buttons.Add("AboutGame", new Button(new Rectangle(startX, startY + (buttonHeight + spacing) * 3, buttonWidth, buttonHeight), ScreenAction.GoToGameInfoMenu, "About Game", _font));
+            _buttons.Add("Exit", new Button(new Rectangle(startX, startY + (buttonHeight + spacing) * 4, buttonWidth, buttonHeight), ScreenAction.ExitGame, "Exit", _font));
         }
 
-        public string Update()
+        public override ScreenAction Update()
         {
-            StartButton.Update();
-            LoadGameButton.Update();
-            SettingsButton.Update();
-            CreatorsButton.Update();
-            ExitGameButton.Update();
-
-            if (StartButton.IsClicked)
+            foreach (var button in _buttons) 
             {
-                IsCurrentMenu = false;
-                Console.WriteLine("Start game button clicked!");
-                return "StartGame";
-                
+                if (button.Value.Update() != ScreenAction.None) { return button.Value.Action; }
             }
 
-            if (LoadGameButton.IsClicked)
-            {
-                // IsCurrentMenu = false;
-                Console.WriteLine("Load game button cliced!");
-            }
-
-            if (SettingsButton.IsClicked)
-            {
-                // IsCurrentMenu = false;
-                Console.WriteLine("Settings button clicked!");
-            }
-
-            if (CreatorsButton.IsClicked)
-            {
-                // IsCurrentMenu = false;
-                Console.WriteLine("Creators button clicked!");
-            }
-
-            if (ExitGameButton.IsClicked)
-            {
-                IsCurrentMenu = false;
-                Console.WriteLine("Exit button clicked!");
-            }
-
-            return string.Empty;
+            return ScreenAction.None;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
-            StartButton.Draw(spriteBatch, _font, _pixel);
-            LoadGameButton.Draw(spriteBatch, _font, _pixel);
-            SettingsButton.Draw(spriteBatch, _font, _pixel);
-            CreatorsButton.Draw(spriteBatch, _font, _pixel);
-            ExitGameButton.Draw(spriteBatch, _font, _pixel);
+            SetTitle(spriteBatch);
+            foreach (var button in _buttons)
+            {
+                button.Value.Draw(spriteBatch, _font, _pixel);
+            }
         }
 
     }

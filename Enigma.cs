@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MyMonoGame.MenuClasses;
 using System;
 
 namespace MyMonoGame
@@ -14,7 +15,10 @@ namespace MyMonoGame
         private Texture2D _pixel;
         private BaseMenu _currentScreen;
         private MainMenuScreen _mainMenuScreen;
-        private CharacterMenuScreen _characterMenuScreen;
+        private LoadGameMenu _loadGameMenu;
+        private SettingsMenu _settingsMenu;
+        private AboutGameMenu _aboutMenu;
+        private PartyMenuScreen _characterMenuScreen;
 
         public Enigma()
         {
@@ -37,7 +41,10 @@ namespace MyMonoGame
             _pixel = new Texture2D(GraphicsDevice, 1, 1);
             _pixel.SetData(new[] { Color.White });
             _mainMenuScreen = new MainMenuScreen("Main menu", GraphicsDevice.Viewport.Height, GraphicsDevice.Viewport.Width, _font, _pixel);
-            _characterMenuScreen = new CharacterMenuScreen("Character menu", GraphicsDevice.Viewport.Height, GraphicsDevice.Viewport.Width, _font, _pixel);
+            _loadGameMenu = new LoadGameMenu("Load Game", GraphicsDevice.Viewport.Height, GraphicsDevice.Viewport.Width, _font, _pixel);
+            _settingsMenu = new SettingsMenu("Settings", GraphicsDevice.Viewport.Height, GraphicsDevice.Viewport.Width, _font, _pixel);
+            _aboutMenu = new AboutGameMenu("About game", GraphicsDevice.Viewport.Height, GraphicsDevice.Viewport.Width, _font, _pixel);
+            _characterMenuScreen = new PartyMenuScreen("Character menu", GraphicsDevice.Viewport.Height, GraphicsDevice.Viewport.Width, _font, _pixel);
             _currentScreen = _mainMenuScreen;
 
             // TODO: use this.Content to load your game content here
@@ -64,13 +71,19 @@ namespace MyMonoGame
                     _currentScreen = _mainMenuScreen;
                     break;
                 case ScreenAction.GoToLoadGameMenu:
+                    _currentScreen = _loadGameMenu;
+                    break;
+                case ScreenAction.GoToAboutGameMenu:
+                    _currentScreen = _aboutMenu;
                     break;
                 case ScreenAction.GoToCharacterMenu:
                     _currentScreen = _characterMenuScreen;
                     break;
                 case ScreenAction.GoToSettingsMenu:
+                    _currentScreen = _settingsMenu;
                     break;
                 case ScreenAction.ExitGame:
+                    this.Exit();
                     break;
                 default:
                     break;

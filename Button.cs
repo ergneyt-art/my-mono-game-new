@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MyMonoGame.MenuClasses;
 
 namespace MyMonoGame
 {
@@ -18,7 +19,6 @@ namespace MyMonoGame
         public bool IsVisible { get; private set; } = true;
         public bool IsEnabled { get; private set; } = true;
         public bool IsHovered { get; private set; }
-        public bool IsClicked { get; private set; }
 
         private Color ButtonUnenabledColor = Color.Gray;
         private Color ButtonHoverdColor = Color.DarkBlue;
@@ -82,7 +82,6 @@ namespace MyMonoGame
             }
             else
             {
-                this.IsClicked = false;
                 this.IsHovered = false;
             }
             return ScreenAction.None;

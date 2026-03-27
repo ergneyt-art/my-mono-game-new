@@ -7,11 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace MyMonoGame
+namespace MyMonoGame.MenuClasses
 {
     public abstract class BaseMenu
     {
         protected string Title;
+        protected List<Button> _buttons;
         protected int _windowHeight;
         protected int _windowWidth;
         protected SpriteFont _font;
@@ -24,17 +25,12 @@ namespace MyMonoGame
             _windowWidth = windowWidth;
             _font = font;
             _pixel = pixel;
+            _buttons = new List<Button>();
         }
 
-        virtual public ScreenAction Update()
-        {
-            return ScreenAction.None;
-        }
+        abstract public ScreenAction Update();
 
-        virtual public void Draw(SpriteBatch spriteBatch)
-        {
-
-        }
+        abstract public void Draw(SpriteBatch spriteBatch);
 
         protected void SetTitle(SpriteBatch spriteBatch)
         {
@@ -53,7 +49,7 @@ namespace MyMonoGame
         GoToMainMenu,
         GoToLoadGameMenu,
         GoToSettingsMenu,
-        GoToGameInfoMenu,
+        GoToAboutGameMenu,
         AddCharacter,
         EditCharacter,
         DeleteCharacter,

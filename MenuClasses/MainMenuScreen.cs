@@ -15,12 +15,13 @@ namespace MyMonoGame.MenuClasses
         private int buttonWidth = 100;
         private int buttonHeight = 50;
         private int startX = 5;
-        private int startY = 5;
+        private int startY = 100;
         private int spacing = 10;
 
         public MainMenuScreen(string title, int windowHeight, int windowWeight, SpriteFont font, Texture2D pixel) : 
             base(title, windowHeight, windowWeight, font, pixel)
         {
+            startX = (windowWeight / 2) - (buttonWidth / 2);
             _buttons.Add(new Button(new Rectangle(startX, startY, buttonWidth, buttonHeight), ScreenAction.GoToCharacterMenu, "Start Game", _font));
             _buttons.Add(new Button(new Rectangle(startX, startY + (buttonHeight + spacing), buttonWidth, buttonHeight), ScreenAction.GoToLoadGameMenu, "Load Game", _font));
             _buttons.Add(new Button(new Rectangle(startX, startY + (buttonHeight + spacing) * 2, buttonWidth, buttonHeight), ScreenAction.GoToSettingsMenu, "Settings", _font));

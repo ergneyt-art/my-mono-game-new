@@ -12,19 +12,25 @@ namespace MyMonoGame.MenuClasses
     {
         public Rectangle Screen;
         public Rectangle HeaderContainer;
-        public Rectangle ContentContainer;
         public Rectangle FooterContainer;
+        public Rectangle Body;
+        public Rectangle ContentContainer;
         public Rectangle LeftPanel;
         public Rectangle RightPanel;
 
-        public double HeaderContainerWidth;
+        public int LeftPanelCurrentX = 0;
+        public int LeftPanelCurrentY = 0;
+
+        public int RightPanelCurrentX = 0;
+        public int RightPanelCurrentY = 0;
+
+        public int ContentContainerCurrentX = 0;
+        public int ContentContainerCurrentY = 0;
+
+
         public double HeaderContainerHeight = 0.1;
 
-        public double CenterWidth;
-        public double CenterHeight;
-
         public double ContentContainerWidth = 0.75;
-        public double ContainedContentHeight = 0.8 ;
 
         public double FootContainerHeight = 0.10;
 
@@ -34,15 +40,16 @@ namespace MyMonoGame.MenuClasses
 
         public MenuLayout(Viewport viewport)
         {
-            CenterWidth = Screen.Width / 2;
-            CenterHeight = Screen.Height / 2;
             Screen = new Rectangle(viewport.X, viewport.Y, viewport.Width, viewport.Height);
             HeaderContainer = new Rectangle(0, 0, Screen.Width, (int)(Screen.Height * HeaderContainerHeight));
-            LeftPanel = new Rectangle(0, HeaderContainer.Height, (int)(Screen.Width * LeftPanelWidth), (int)(Screen.Height - FootContainerHeight));
-            ContentContainer = new Rectangle(RightPanel.Width, HeaderContainer.Height, (int)(Screen.Width * ContentContainerWidth), (int)(Screen.Height * ContainedContentHeight));
-            RightPanel = new Rectangle(Screen.Width - (int)(Screen.Width * RightPanelWidth), HeaderContainer.Height, (int)(Screen.Width * RightPanelWidth), (int)(Screen.Height * RightPanelWidth));
             FooterContainer = new Rectangle(0, Screen.Height - (int)(Screen.Height * FootContainerHeight), Screen.Width, (int)(Screen.Height * FootContainerHeight));
-
+            Body = new Rectangle(0, Screen.Height - HeaderContainer.Height, Screen.Width, Screen.Height - HeaderContainer.Height - FooterContainer.Height);
+            LeftPanel = new Rectangle(0, HeaderContainer.Height, (int)(Body.Width * LeftPanelWidth), Body.Height);
+            ContentContainer = new Rectangle(LeftPanel.Width, HeaderContainer.Height, (int)(Body.Width * ContentContainerWidth), Body.Height);
+            RightPanel = new Rectangle(LeftPanel.Width + ContentContainer.Width, HeaderContainer.Height, (int)(Body.Width * RightPanelWidth), Body.Height);
+            LeftPanelCurrentY = LeftPanel.Top;
+            RightPanelCurrentY = RightPanel.Top;
+            ContentContainerCurrentX = ContentContainer.Left;
         }
     }
 }

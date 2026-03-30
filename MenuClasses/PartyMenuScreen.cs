@@ -19,28 +19,28 @@ namespace MyMonoGame.MenuClasses
         private int buttonHeight = 50;
         private int startX;
         private int startY;
-        private int spacing = 10;
 
-        public PartyMenuScreen(string title, int windowHeight, int windowWeight, SpriteFont font, Texture2D pixel) : 
-            base(title, windowHeight, windowWeight, font, pixel)
+        public PartyMenuScreen(string title, Viewport viewport, SpriteFont font, Texture2D pixel) : 
+            base(title, viewport, font, pixel)
         {
+            _spacing = 10;
             _charSlots = new List<CharacterSlotUI>();
 
-            _buttons.Add(new Button(new Rectangle(spacing, spacing, buttonWidth, buttonHeight), ScreenAction.GoToMainMenu, "Back", _font));
+            _buttons.Add(new Button(new Rectangle(_spacing, _spacing, buttonWidth, buttonHeight), ScreenAction.GoToMainMenu, "Back", _font));
 
-            _buttons.Add(new Button(new Rectangle(_windowWidth - (spacing + buttonWidth), spacing, buttonWidth, buttonHeight), ScreenAction.StartGame, "StartGame", _font));
-            startX = spacing;
+            _buttons.Add(new Button(new Rectangle(_menuLayout.Screen.Width - (_spacing + buttonWidth), _spacing, buttonWidth, buttonHeight), ScreenAction.StartGame, "StartGame", _font));
+            startX = _spacing;
             for (int i = 1; i <= 4; i++)
             {
                 
                 var chairSlot = new CharacterSlotUI()
                 {
-                    CreateButton = new Button(new Rectangle(startX, _windowHeight - buttonHeight - spacing, buttonWidth, buttonHeight), ScreenAction.AddCharacter, "Add", _font),
-                    ChangeButton = new Button(new Rectangle(startX, _windowHeight - buttonHeight - spacing, buttonWidth, buttonHeight), ScreenAction.EditCharacter, "Edit", _font),
-                    DeleteButton = new Button(new Rectangle(startX, _windowHeight - (buttonHeight * 2 + spacing), buttonWidth, buttonHeight), ScreenAction.DeleteCharacter, "Delete", _font),
+                    CreateButton = new Button(new Rectangle(startX, _menuLayout.Screen.Height - buttonHeight - _spacing, buttonWidth, buttonHeight), ScreenAction.AddCharacter, "Add", _font),
+                    ChangeButton = new Button(new Rectangle(startX, _menuLayout.Screen.Height - buttonHeight - _spacing, buttonWidth, buttonHeight), ScreenAction.EditCharacter, "Edit", _font),
+                    DeleteButton = new Button(new Rectangle(startX, _menuLayout.Screen.Height - (buttonHeight * 2 + _spacing), buttonWidth, buttonHeight), ScreenAction.DeleteCharacter, "Delete", _font),
                 };
                 _charSlots.Add(chairSlot);
-                startX = startX + spacing + buttonWidth;
+                startX = startX + _spacing + buttonWidth;
             }
 
             ManageButtons();

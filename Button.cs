@@ -12,7 +12,7 @@ namespace MyMonoGame
 {
     public class Button
     {
-        private Rectangle Bounds;
+        public Rectangle Bounds { get; private set; }
         public string Text { get; private set; }
         public ScreenAction Action { get; private set; }
 

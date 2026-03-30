@@ -14,11 +14,11 @@ namespace MyMonoGame.MenuClasses
         private int buttonHeight = 50;
         private int startX;
         private int startY;
-        private int spacing = 10;
 
-        public LoadGameMenu(string title, int windowHeight, int windowWidth, SpriteFont font, Texture2D pixel) : base(title, windowHeight, windowWidth, font, pixel)
+        public LoadGameMenu(string title, Viewport viewport, SpriteFont font, Texture2D pixel) : base(title, viewport, font, pixel)
         {
-            _buttons.Add(new Button(new Rectangle(spacing, spacing, buttonWidth, buttonHeight), ScreenAction.GoToMainMenu, "Back", _font));
+            _spacing = 10;
+            _buttons.Add(new Button(new Rectangle(_spacing, _spacing, buttonWidth, buttonHeight), ScreenAction.GoToMainMenu, "Back", _font));
         }
 
         public override ScreenAction Update()

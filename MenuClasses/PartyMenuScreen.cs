@@ -15,32 +15,18 @@ namespace MyMonoGame.MenuClasses
     {
         private List<CharacterSlotUI> _charSlots;
 
-        private int buttonWidth = 100;
-        private int buttonHeight = 50;
-        private int startX;
-        private int startY;
-
         public PartyMenuScreen(string title, Viewport viewport, SpriteFont font, Texture2D pixel) : 
             base(title, viewport, font, pixel)
         {
-            _spacing = 10;
             _charSlots = new List<CharacterSlotUI>();
+            AddButtonToLeftPanel("Back", ScreenAction.GoToMainMenu);
+            AddButtonToRightPanel("Start Game", ScreenAction.StartGame);
+            var slotSize = this._menuLayout.ContentContainer.Width / 4;
 
-            _buttons.Add(new Button(new Rectangle(_spacing, _spacing, buttonWidth, buttonHeight), ScreenAction.GoToMainMenu, "Back", _font));
-
-            _buttons.Add(new Button(new Rectangle(_menuLayout.Screen.Width - (_spacing + buttonWidth), _spacing, buttonWidth, buttonHeight), ScreenAction.StartGame, "StartGame", _font));
-            startX = _spacing;
-            for (int i = 1; i <= 4; i++)
+            for (int i = 0; i < 4; i++)
             {
-                
-                var chairSlot = new CharacterSlotUI()
-                {
-                    CreateButton = new Button(new Rectangle(startX, _menuLayout.Screen.Height - buttonHeight - _spacing, buttonWidth, buttonHeight), ScreenAction.AddCharacter, "Add", _font),
-                    ChangeButton = new Button(new Rectangle(startX, _menuLayout.Screen.Height - buttonHeight - _spacing, buttonWidth, buttonHeight), ScreenAction.EditCharacter, "Edit", _font),
-                    DeleteButton = new Button(new Rectangle(startX, _menuLayout.Screen.Height - (buttonHeight * 2 + _spacing), buttonWidth, buttonHeight), ScreenAction.DeleteCharacter, "Delete", _font),
-                };
-                _charSlots.Add(chairSlot);
-                startX = startX + _spacing + buttonWidth;
+                var frame = new Rectangle(this._menuLayout.ContentContainer.Left + (slotSize * i), _menuLayout.ContentContainer.Top, slotSize, _menuLayout.ContentContainer.Height);
+                _charSlots.Add(new CharacterSlotUI(frame, _font));
             }
 
             ManageButtons();

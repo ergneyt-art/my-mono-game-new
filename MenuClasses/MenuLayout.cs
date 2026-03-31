@@ -30,13 +30,13 @@ namespace MyMonoGame.MenuClasses
 
         public double HeaderContainerHeight = 0.1;
 
-        public double ContentContainerWidth = 0.75;
+        public double ContentContainerWidth = 0.70;
 
         public double FootContainerHeight = 0.10;
 
         public double LeftPanelWidth = 0.15;
 
-        public double RightPanelWidth = 0.10;
+        public double RightPanelWidth = 0.15;
 
         public MenuLayout(Viewport viewport)
         {
@@ -50,6 +50,7 @@ namespace MyMonoGame.MenuClasses
             LeftPanelCurrentY = LeftPanel.Top;
             RightPanelCurrentY = RightPanel.Top;
             ContentContainerCurrentX = ContentContainer.Left;
+            ContentContainerCurrentY = ContentContainer.Top;
         }
     }
 }

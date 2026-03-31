@@ -11,29 +11,17 @@ namespace MyMonoGame.MenuClasses
 {
     public class MainMenuScreen : BaseMenu
     {
-        private int buttonWidth = 100;
-        private int buttonHeight = 50;
-        private int startX = 5;
-        private int startY = 100;
-
         public MainMenuScreen(string title, Viewport viewport, SpriteFont font, Texture2D pixel) : 
             base(title, viewport, font, pixel)
         {
             _spacing = 10;
-            this.AddButtonToCenterPanelTop("Start Game", ScreenAction.GoToCharacterMenu);
-            this.AddButtonToCenterPanelTop("Load Game", ScreenAction.GoToLoadGameMenu);
-            this.AddButtonToCenterPanelTop("Settings", ScreenAction.GoToSettingsMenu);
-            this.AddButtonToCenterPanelTop("About Game", ScreenAction.GoToAboutGameMenu);
-            this.AddButtonToCenterPanelTop("Exit", ScreenAction.ExitGame);
+            this.AddButtonToCenterPanel("Start Game", ScreenAction.GoToCharacterMenu);
+            this.AddButtonToCenterPanel("Load Game", ScreenAction.GoToLoadGameMenu);
+            this.AddButtonToCenterPanel("Settings", ScreenAction.GoToSettingsMenu);
+            this.AddButtonToCenterPanel("About Game", ScreenAction.GoToAboutGameMenu);
+            this.AddButtonToCenterPanel("Exit", ScreenAction.ExitGame);
 
-            /*
-            startX = (viewport.Width / 2) - (viewport.Height / 2);
-            _buttons.Add(new Button(new Rectangle(startX, startY, buttonWidth, buttonHeight), ScreenAction.GoToCharacterMenu, "Start Game", _font));
-            _buttons.Add(new Button(new Rectangle(startX, startY + (buttonHeight + _spacing), buttonWidth, buttonHeight), ScreenAction.GoToLoadGameMenu, "Load Game", _font));
-            _buttons.Add(new Button(new Rectangle(startX, startY + (buttonHeight + _spacing) * 2, buttonWidth, buttonHeight), ScreenAction.GoToSettingsMenu, "Settings", _font));
-            _buttons.Add(new Button(new Rectangle(startX, startY + (buttonHeight + _spacing) * 3, buttonWidth, buttonHeight), ScreenAction.GoToAboutGameMenu, "About Game", _font));
-            _buttons.Add(new Button(new Rectangle(startX, startY + (buttonHeight + _spacing) * 4, buttonWidth, buttonHeight), ScreenAction.ExitGame, "Exit", _font));
-            */
+            this.AddButtonToCenterPanel("Test", ScreenAction.Test);
         }
 
         public override ScreenAction Update()

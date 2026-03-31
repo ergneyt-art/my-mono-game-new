@@ -10,15 +10,10 @@ namespace MyMonoGame.MenuClasses
 {
     public class LoadGameMenu : BaseMenu
     {
-        private int buttonWidth = 100;
-        private int buttonHeight = 50;
-        private int startX;
-        private int startY;
-
         public LoadGameMenu(string title, Viewport viewport, SpriteFont font, Texture2D pixel) : base(title, viewport, font, pixel)
         {
             _spacing = 10;
-            _buttons.Add(new Button(new Rectangle(_spacing, _spacing, buttonWidth, buttonHeight), ScreenAction.GoToMainMenu, "Back", _font));
+            AddButtonToLeftPanel("Back", ScreenAction.GoToMainMenu);
         }
 
         public override ScreenAction Update()

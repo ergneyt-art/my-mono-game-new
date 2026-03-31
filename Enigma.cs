@@ -85,6 +85,9 @@ namespace MyMonoGame
                 case ScreenAction.ExitGame:
                     this.Exit();
                     break;
+                case ScreenAction.Test:
+                    _currentScreen.HideLeftPanelButtons();
+                    break;
                 default:
                     break;
             }

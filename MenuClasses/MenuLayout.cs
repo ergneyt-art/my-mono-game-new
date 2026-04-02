@@ -18,6 +18,18 @@ namespace MyMonoGame.MenuClasses
         public Rectangle LeftPanel;
         public Rectangle RightPanel;
 
+        private readonly MenuLayoutConfig _defaultConfig = new MenuLayoutConfig
+        {
+            ProcentFrame = 1,
+            HeaderContainerHeight = 0.1,
+            FootContainerHeight = 0.1,
+            LeftPanelWidth = 0.15,
+            RightPanelWidth = 0.15,
+            ContentContainerWidth = 0.7
+        };
+
+        public MenuLayoutConfig Config;
+
         public int LeftPanelCurrentX = 0;
         public int LeftPanelCurrentY = 0;
 
@@ -27,30 +39,60 @@ namespace MyMonoGame.MenuClasses
         public int ContentContainerCurrentX = 0;
         public int ContentContainerCurrentY = 0;
 
-
-        public double HeaderContainerHeight = 0.1;
-
-        public double ContentContainerWidth = 0.70;
-
-        public double FootContainerHeight = 0.10;
-
-        public double LeftPanelWidth = 0.15;
-
-        public double RightPanelWidth = 0.15;
-
-        public MenuLayout(Viewport viewport)
+        public MenuLayout(Rectangle frame, MenuLayoutConfig config = default)
         {
-            Screen = new Rectangle(viewport.X, viewport.Y, viewport.Width, viewport.Height);
-            HeaderContainer = new Rectangle(0, 0, Screen.Width, (int)(Screen.Height * HeaderContainerHeight));
-            FooterContainer = new Rectangle(0, Screen.Height - (int)(Screen.Height * FootContainerHeight), Screen.Width, (int)(Screen.Height * FootContainerHeight));
-            Body = new Rectangle(0, Screen.Height - HeaderContainer.Height, Screen.Width, Screen.Height - HeaderContainer.Height - FooterContainer.Height);
-            LeftPanel = new Rectangle(0, HeaderContainer.Height, (int)(Body.Width * LeftPanelWidth), Body.Height);
-            ContentContainer = new Rectangle(LeftPanel.Width, HeaderContainer.Height, (int)(Body.Width * ContentContainerWidth), Body.Height);
-            RightPanel = new Rectangle(LeftPanel.Width + ContentContainer.Width, HeaderContainer.Height, (int)(Body.Width * RightPanelWidth), Body.Height);
+            if (config == default) 
+            {
+                Config = _defaultConfig;
+            }
+            else
+            {
+                Config = config;
+            }
+            ApplyConfig(frame);
+        }
+
+        private void ApplyConfig(Rectangle frame)
+        {
+            Screen = new Rectangle(
+                (int)(frame.Center.X - ((frame.Width * Config.ProcentFrame) / 2)),
+                (int)(frame.Center.Y - ((frame.Height * Config.ProcentFrame) / 2)),
+                (int)(frame.Width * Config.ProcentFrame),
+                (int)(frame.Height * Config.ProcentFrame)
+            );
+            HeaderContainer = new Rectangle(Screen.Left, Screen.Top, Screen.Width, (int)(Screen.Height * Config.HeaderContainerHeight));
+            FooterContainer = new Rectangle(Screen.Left, Screen.Height - (int)(Screen.Height * Config.FootContainerHeight), Screen.Width, (int)(Screen.Height * Config.FootContainerHeight));
+            Body = new Rectangle(Screen.Left, Screen.Height - HeaderContainer.Height, Screen.Width, Screen.Height - HeaderContainer.Height - FooterContainer.Height);
+            LeftPanel = new Rectangle(Screen.Left, HeaderContainer.Height, (int)(Body.Width * Config.LeftPanelWidth), Body.Height);
+            ContentContainer = new Rectangle(LeftPanel.Width, HeaderContainer.Height, (int)(Body.Width * Config.ContentContainerWidth), Body.Height);
+            RightPanel = new Rectangle(LeftPanel.Width + ContentContainer.Width, HeaderContainer.Height, (int)(Body.Width * Config.RightPanelWidth), Body.Height);
             LeftPanelCurrentY = LeftPanel.Top;
             RightPanelCurrentY = RightPanel.Top;
             ContentContainerCurrentX = ContentContainer.Left;
             ContentContainerCurrentY = ContentContainer.Top;
         }
     }
+
+    public class MenuLayoutConfig
+    {
+        public double ProcentFrame;
+        public double HeaderContainerHeight;
+        public double ContentContainerWidth;
+        public double FootContainerHeight;
+        public double LeftPanelWidth;
+        public double RightPanelWidth;
+
+        /*
+        public MenuLayoutConfig(double procentFrame, double headerContainerHeight, double contentContainerWidth, double footContainerHeight, double leftPanelWidth, double rightPanelWidth)
+        {
+            ProcentFrame = procentFrame;
+            HeaderContainerHeight = headerContainerHeight;
+            ContentContainerWidth = contentContainerWidth;
+            FootContainerHeight = footContainerHeight;
+            LeftPanelWidth = leftPanelWidth;
+            RightPanelWidth = rightPanelWidth;
+        }
+        */
+    }
+
 }

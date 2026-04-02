@@ -8,19 +8,20 @@ using System.Threading.Tasks;
 
 namespace MyMonoGame.MenuClasses
 {
-    public class LoadGameMenu : BaseMenu
+    public class LoadGameMenu : BaseMenu<ScreenAction>
     {
-        public LoadGameMenu(string title, Viewport viewport, SpriteFont font, Texture2D pixel) : base(title, viewport, font, pixel)
+        public LoadGameMenu(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : base(title, frame, font, pixel)
         {
-            _spacing = 10;
-            AddButtonToLeftPanel("Back", ScreenAction.GoToMainMenu);
+            AddButtonToRightPanel("Back", ScreenAction.GoToMainMenu);
         }
 
         public override ScreenAction Update()
         {
+            ButtonsEnabledManage();
             foreach (var button in _buttons)
             {
-                if (button.Update() != ScreenAction.None) return button.Action;
+                button.Update();
+                if (button.IsClicked) return button.Action;
             }
             return ScreenAction.None;
         }

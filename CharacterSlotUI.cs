@@ -14,9 +14,9 @@ namespace MyMonoGame
     {
         public Character? Character;
         public Rectangle Slot;
-        public Button CreateButton;
-        public Button ChangeButton;
-        public Button DeleteButton;
+        public Button<PartyMenuActions> CreateButton;
+        public Button<PartyMenuActions> ChangeButton;
+        public Button<PartyMenuActions> DeleteButton;
         private const int _defaultButtonWidth = 80;
         private const int _defaultButtonHeight = 40;
         private const int _defaultButtonSpacing = 5;
@@ -24,9 +24,9 @@ namespace MyMonoGame
         public CharacterSlotUI(Rectangle frame, SpriteFont font, int buttonWidth = _defaultButtonWidth, int buttonHeight = _defaultButtonHeight, int buttonSpacing = _defaultButtonSpacing)
         {
             Slot = frame;
-            DeleteButton = new Button(new Rectangle(Slot.X + buttonSpacing, Slot.Bottom - (buttonSpacing + buttonHeight), buttonWidth, buttonHeight), ScreenAction.DeleteCharacter, "Delete", font);
-            CreateButton = new Button(new Rectangle(Slot.X + buttonSpacing, Slot.Bottom - (buttonSpacing + buttonHeight) * 2, buttonWidth, buttonHeight), ScreenAction.AddCharacter, "Add", font);
-            ChangeButton = new Button(new Rectangle(Slot.X + buttonSpacing, Slot.Bottom - (buttonSpacing + buttonHeight) * 2, buttonWidth, buttonHeight), ScreenAction.EditCharacter, "Edit", font);
+            DeleteButton = new Button<PartyMenuActions>(new Rectangle(Slot.X + buttonSpacing, Slot.Bottom - (buttonSpacing + buttonHeight), buttonWidth, buttonHeight), PartyMenuActions.DeleteCharacter, "Delete", font);
+            CreateButton = new Button<PartyMenuActions>(new Rectangle(Slot.X + buttonSpacing, Slot.Bottom - (buttonSpacing + buttonHeight) * 2, buttonWidth, buttonHeight), PartyMenuActions.AddCharacter, "Add", font);
+            ChangeButton = new Button<PartyMenuActions>(new Rectangle(Slot.X + buttonSpacing, Slot.Bottom - (buttonSpacing + buttonHeight) * 2, buttonWidth, buttonHeight), PartyMenuActions.EditCharacter, "Edit", font);
             Character = null;
         }
     }

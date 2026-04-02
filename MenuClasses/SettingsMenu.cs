@@ -8,24 +8,21 @@ using System.Threading.Tasks;
 
 namespace MyMonoGame.MenuClasses
 {
-    public class SettingsMenu : BaseMenu
+    public class SettingsMenu : BaseMenu<ScreenAction>
     {
-        private int buttonWidth = 100;
-        private int buttonHeight = 50;
-        private int startX;
-        private int startY;
-
-        public SettingsMenu(string title, Viewport viewport, SpriteFont font, Texture2D pixel) : base(title, viewport, font, pixel)
+        public SettingsMenu(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : base(title, frame, font, pixel)
         {
             _spacing = 10;
-            _buttons.Add(new Button(new Rectangle(_spacing, _spacing, buttonWidth, buttonHeight), ScreenAction.GoToMainMenu, "Back", _font));
+            AddButtonToLeftPanel("Back", ScreenAction.GoToMainMenu);
         }
 
         public override ScreenAction Update()
         {
+            ButtonsEnabledManage();
             foreach (var button in _buttons)
             {
-                if (button.Update() != ScreenAction.None) return button.Action;
+                button.Update();
+                if (button.IsClicked) return button.Action;
             }
             return ScreenAction.None;
         }

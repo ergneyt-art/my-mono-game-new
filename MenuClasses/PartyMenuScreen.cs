@@ -11,12 +11,12 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace MyMonoGame.MenuClasses
 {
-    public class PartyMenuScreen : BaseMenu
+    public class PartyMenuScreen : BaseMenu<ScreenAction>
     {
         private List<CharacterSlotUI> _charSlots;
 
-        public PartyMenuScreen(string title, Viewport viewport, SpriteFont font, Texture2D pixel) : 
-            base(title, viewport, font, pixel)
+        public PartyMenuScreen(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : 
+            base(title, frame, font, pixel)
         {
             _charSlots = new List<CharacterSlotUI>();
             AddButtonToLeftPanel("Back", ScreenAction.GoToMainMenu);
@@ -25,11 +25,11 @@ namespace MyMonoGame.MenuClasses
 
             for (int i = 0; i < 4; i++)
             {
-                var frame = new Rectangle(this._menuLayout.ContentContainer.Left + (slotSize * i), _menuLayout.ContentContainer.Top, slotSize, _menuLayout.ContentContainer.Height);
-                _charSlots.Add(new CharacterSlotUI(frame, _font));
+                var characterFrame = new Rectangle(this._menuLayout.ContentContainer.Left + (slotSize * i), _menuLayout.ContentContainer.Top, slotSize, _menuLayout.ContentContainer.Height);
+                _charSlots.Add(new CharacterSlotUI(characterFrame, _font));
             }
 
-            ManageButtons();
+            ButtonsEnabledManage();
         }
 
         private void ManageButtons()
@@ -62,10 +62,11 @@ namespace MyMonoGame.MenuClasses
 
         public override ScreenAction Update()
         {
-            ManageButtons();
+            ButtonsEnabledManage();
             foreach (var button in _buttons)
             {
-                if (button.Update() != ScreenAction.None) 
+                button.Update();
+                if (button.IsClicked) 
                 { 
                     return button.Action;
                 }
@@ -73,9 +74,9 @@ namespace MyMonoGame.MenuClasses
 
             foreach (var slot in _charSlots)
             {
-                if (slot.CreateButton.Update() != ScreenAction.None) { return slot.CreateButton.Action; }
-                else if (slot.ChangeButton.Update() != ScreenAction.None) { return slot.ChangeButton.Action; }
-                else if (slot.DeleteButton.Update() != ScreenAction.None) { return slot.DeleteButton.Action; }
+                slot.CreateButton.Update();
+                slot.ChangeButton.Update();
+                slot.DeleteButton.Update();
             }
             return ScreenAction.None;
         }
@@ -93,6 +94,12 @@ namespace MyMonoGame.MenuClasses
                 slot.ChangeButton.Draw(spriteBatch, _font, _pixel);
                 slot.DeleteButton.Draw(spriteBatch, _font, _pixel);
             }
+        }
+
+        protected override void ButtonsEnabledManage() 
+        {
+            base.ButtonsEnabledManage();
+            ManageButtons();
         }
     }
 }

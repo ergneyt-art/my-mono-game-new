@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace MyMonoGame.MenuClasses
 {
-    public class AboutGameMenu : BaseMenu
+    public class AboutGameMenu : BaseMenu<ScreenAction>
     {
-        public AboutGameMenu(string title, Viewport viewport, SpriteFont font, Texture2D pixel) : base(title, viewport, font, pixel)
+        public AboutGameMenu(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : base(title, frame, font, pixel)
         {
             _spacing = 10;
             AddButtonToLeftPanel("Back", ScreenAction.GoToMainMenu);
@@ -18,9 +18,11 @@ namespace MyMonoGame.MenuClasses
 
         public override ScreenAction Update()
         {
-            foreach (var button in _buttons) 
+            ButtonsEnabledManage();
+            foreach (var button in _buttons)
             {
-                if (button.Update() != ScreenAction.None) return button.Action;
+                button.Update();
+                if (button.IsClicked) return button.Action;
             }
             return ScreenAction.None;
         }

@@ -9,26 +9,49 @@ using System.Threading.Tasks;
 
 namespace MyMonoGame.MenuClasses
 {
-    public class MainMenuScreen : BaseMenu
+    public class MainMenuScreen : BaseMenu<ScreenAction>
     {
-        public MainMenuScreen(string title, Viewport viewport, SpriteFont font, Texture2D pixel) : 
-            base(title, viewport, font, pixel)
+        public MainMenuScreen(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : 
+            base(title, frame, font, pixel)
         {
             _spacing = 10;
-            this.AddButtonToCenterPanel("Start Game", ScreenAction.GoToCharacterMenu);
-            this.AddButtonToCenterPanel("Load Game", ScreenAction.GoToLoadGameMenu);
-            this.AddButtonToCenterPanel("Settings", ScreenAction.GoToSettingsMenu);
-            this.AddButtonToCenterPanel("About Game", ScreenAction.GoToAboutGameMenu);
-            this.AddButtonToCenterPanel("Exit", ScreenAction.ExitGame);
+            this.AddButtonToCenterPanel("Start Game", ScreenAction.GoToCharacterMenu, AddButtonMode.Bottom);
+            this.AddButtonToCenterPanel("Load Game", ScreenAction.GoToLoadGameMenu, AddButtonMode.Bottom);
+            this.AddButtonToCenterPanel("Settings", ScreenAction.GoToSettingsMenu, AddButtonMode.Bottom);
+            this.AddButtonToCenterPanel("About Game", ScreenAction.GoToAboutGameMenu, AddButtonMode.Bottom);
+            this.AddButtonToCenterPanel("Exit", ScreenAction.ExitGame, AddButtonMode.Bottom);
 
-            this.AddButtonToCenterPanel("Test", ScreenAction.Test);
+            this.AddButtonToCenterPanel("Test", ScreenAction.Test, AddButtonMode.Bottom);
         }
 
         public override ScreenAction Update()
         {
+            ButtonsEnabledManage();
+            if (_infoDialog != null) 
+            {
+                var dialogResult = _infoDialog.Update();
+                if (dialogResult != InfoDialogResult.None) 
+                {
+                    _infoDialog.Close();
+                    _infoDialog = null;
+                    return ScreenAction.None;
+                }
+            }
+
             foreach (var button in _buttons) 
             {
-                if (button.Update() != ScreenAction.None) { return button.Action; }
+                button.Update();
+                if (button.IsClicked && button.Action == ScreenAction.Test) 
+                {
+                    _infoDialog = new InfoDialog("Test", _font, "This is a test dialog.", _menuLayout.ContentContainer);
+                    TurnOffAllButtons();
+                    _infoDialog.Open();
+                    return ScreenAction.None;
+                }
+                if (button.IsClicked) 
+                { 
+                    return button.Action; 
+                }
             }
 
             return ScreenAction.None;
@@ -36,12 +59,18 @@ namespace MyMonoGame.MenuClasses
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            SetTitle(spriteBatch);
-            foreach (var button in _buttons)
+            if (_infoDialog != null) 
             {
-                button.Draw(spriteBatch, _font, _pixel);
+                _infoDialog.Draw(spriteBatch, _font, _pixel);
+            }
+            else
+            {
+                SetTitle(spriteBatch);
+                foreach (var button in _buttons)
+                {
+                    button.Draw(spriteBatch, _font, _pixel);
+                }
             }
         }
-
     }
 }

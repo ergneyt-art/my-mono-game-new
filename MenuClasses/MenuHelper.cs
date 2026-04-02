@@ -10,24 +10,25 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace MyMonoGame.MenuClasses
 {
-    public abstract class BaseMenu
+    public abstract class BaseMenu<T> where T : Enum
     {
         protected string Title;
-        protected List<Button> _buttons;
+        protected List<Button<T>> _buttons;
         protected SpriteFont _font;
         protected Texture2D _pixel;
         protected MenuLayout _menuLayout;
         protected int _spacing = 10;
         protected const int _defaultButtonWidth = 100;
         protected const int _defaultButtonHeight = 50;
+        protected InfoDialog _infoDialog;
 
-        public BaseMenu(string title, Viewport viewport, SpriteFont font, Texture2D pixel)
+        public BaseMenu(string title, Rectangle frame, SpriteFont font, Texture2D pixel)
         {
             Title = title;
-            _menuLayout = new MenuLayout(viewport);
+            _menuLayout = new MenuLayout(frame);
             _font = font;
             _pixel = pixel;
-            _buttons = new List<Button>();
+            _buttons = new List<Button<T>>();
         }
 
         protected void ShowInfoWindow(string message, SpriteBatch spriteBatch)
@@ -37,6 +38,24 @@ namespace MyMonoGame.MenuClasses
             float y_axis = _menuLayout.ContentContainer.Center.Y - size.Y / 2;
             var position = new Vector2(x_axis, y_axis);
             spriteBatch.DrawString(_font, message, position, Color.White);
+        }
+
+        virtual protected void ButtonsEnabledManage()
+        {
+            if (_infoDialog != null && _infoDialog.IsOpen) 
+            {
+                foreach (var button in _buttons)
+                {
+                    button.SetEnabled(false);
+                }
+            }
+            else
+            {
+                foreach (var button in _buttons)
+                {
+                    button.SetEnabled(true);
+                }
+            }
         }
 
         abstract public ScreenAction Update();
@@ -86,7 +105,15 @@ namespace MyMonoGame.MenuClasses
             }
         }
 
-        protected void AddButtonToRightPanel(string text, ScreenAction action, int width = _defaultButtonWidth, int height = _defaultButtonHeight)
+        protected void TurnOffAllButtons()
+        {
+            foreach (var button in _buttons)
+            {
+                button.SetEnabled(false);
+            }
+        }
+
+        protected void AddButtonToRightPanel(string text, T action, int width = _defaultButtonWidth, int height = _defaultButtonHeight)
         {
             if (_menuLayout.RightPanel.Bottom < (_menuLayout.RightPanelCurrentY + _spacing + height))
             {
@@ -97,13 +124,13 @@ namespace MyMonoGame.MenuClasses
 
             int x_axis = (int)(_menuLayout.RightPanel.Center.X - width / 2);
             int y_axis = _menuLayout.RightPanelCurrentY;
-            var button = new Button(new Rectangle(x_axis, y_axis, width, height), action, text, _font);
+            var button = new Button<T>(new Rectangle(x_axis, y_axis, width, height), action, text, _font);
 
             _menuLayout.RightPanelCurrentY += height;
             _buttons.Add(button);
         }
 
-        protected void AddButtonToLeftPanel(string text, ScreenAction action, int width = _defaultButtonWidth, int height = _defaultButtonHeight)
+        protected void AddButtonToLeftPanel(string text, T action, int width = _defaultButtonWidth, int height = _defaultButtonHeight)
         {
             if (_menuLayout.LeftPanel.Bottom < (_menuLayout.LeftPanelCurrentY + _spacing + height))
             {
@@ -112,12 +139,12 @@ namespace MyMonoGame.MenuClasses
             _menuLayout.LeftPanelCurrentY += _spacing;
             int x_axis = (int)(_menuLayout.LeftPanel.Center.X - width / 2);
             int y_axis = _menuLayout.LeftPanelCurrentY;
-            var button = new Button(new Rectangle(x_axis, y_axis, width, height), action, text, _font);
+            var button = new Button<T>(new Rectangle(x_axis, y_axis, width, height), action, text, _font);
             _menuLayout.LeftPanelCurrentY += height;
             _buttons.Add(button);
         }
 
-        protected void AddButtonToCenterPanel(string text, ScreenAction action, AddButtonMode mode = AddButtonMode.Center, int width = _defaultButtonWidth, int height = _defaultButtonHeight)
+        protected void AddButtonToCenterPanel(string text, T action, AddButtonMode mode = AddButtonMode.Center, int width = _defaultButtonWidth, int height = _defaultButtonHeight)
         {
             var x = 0;
             var y = 0;
@@ -125,36 +152,33 @@ namespace MyMonoGame.MenuClasses
             {
                 case AddButtonMode.Center:
                     x = _menuLayout.ContentContainer.Center.X - width / 2;
-                    _menuLayout.ContentContainerCurrentY += _spacing;
-                    y = _menuLayout.ContentContainerCurrentY;
+                    y = _menuLayout.ContentContainerCurrentY + _spacing;
                     _buttons.Add(CreateButton(x, y, width, height, text, action, _font));
-                    _menuLayout.ContentContainerCurrentY += height;
+                    _menuLayout.ContentContainerCurrentY += height + _spacing;
                     break;
                 case AddButtonMode.Left:
                     x = _spacing;
-                    _menuLayout.ContentContainerCurrentY += _spacing;
-                    y = _menuLayout.ContentContainerCurrentY;
+                    y = _menuLayout.ContentContainerCurrentY + _spacing;
                     _buttons.Add(CreateButton(x, y, width, height, text, action, _font));
-                    _menuLayout.ContentContainerCurrentY += height;
+                    _menuLayout.ContentContainerCurrentY += height + _spacing;
                     break;
                 case AddButtonMode.Right:
                     x = _menuLayout.ContentContainer.Right - _spacing;
-                    _menuLayout.ContentContainerCurrentY += _spacing;
-                    y = _menuLayout.ContentContainerCurrentY;
+                    y = _menuLayout.ContentContainerCurrentY + _spacing;
                     _buttons.Add(CreateButton(x, y, width, height, text, action, _font));
-                    _menuLayout.ContentContainerCurrentY += height;
+                    _menuLayout.ContentContainerCurrentY += height + _spacing;
                     break;
                 case AddButtonMode.Top:
-                    x = _menuLayout.ContentContainerCurrentX;
+                    x = _menuLayout.ContentContainerCurrentX + _spacing;
                     y = _menuLayout.ContentContainer.Top + _spacing;
                     _buttons.Add(CreateButton(x, y, width, height, text, action, _font));
-                    _menuLayout.ContentContainerCurrentX += width;
+                    _menuLayout.ContentContainerCurrentX += _spacing + width;
                     break;
                 case AddButtonMode.Bottom:
-                    x = _menuLayout.ContentContainerCurrentX;
+                    x = _menuLayout.ContentContainerCurrentX + _spacing;
                     y = _menuLayout.ContentContainer.Bottom - height - _spacing;
                     _buttons.Add(CreateButton(x, y, width, height, text, action, _font));
-                    _menuLayout.ContentContainerCurrentX += width;
+                    _menuLayout.ContentContainerCurrentX += _spacing + width;
                     break;
                 default:
                     throw new ArgumentException("Invalid AddButtonMode value.");
@@ -162,14 +186,13 @@ namespace MyMonoGame.MenuClasses
             }
         }
 
-        private Button CreateButton(int x, int y, int width, int height, string text, ScreenAction action, SpriteFont font) 
+        private Button<T> CreateButton(int x, int y, int width, int height, string text, T action, SpriteFont font) 
         {
-            var newButton = new Button(new Rectangle(x, y, width, height), action, text, _font);
+            var newButton = new Button<T>(new Rectangle(x, y, width, height), action, text, _font);
             foreach (var bottom in _buttons)
             {
                 if (bottom.IsVisible && bottom.Bounds.Contains(newButton.Bounds))
                 {
-                    _menuLayout.ContentContainerCurrentX -= _spacing;
                     throw new InvalidOperationException("New button overlaps with an existing button. Please adjust the layout or reduce the number of buttons.");
                 }
             }
@@ -187,31 +210,6 @@ namespace MyMonoGame.MenuClasses
             var position = new Vector2(x_axis, y_axis);
             spriteBatch.DrawString(_font, Title, position, Color.White);
         }
-    }
-
-    public enum ScreenAction
-    {
-        None,
-        GoToCharacterMenu,
-        GoToMainMenu,
-        GoToLoadGameMenu,
-        GoToSettingsMenu,
-        GoToAboutGameMenu,
-        AddCharacter,
-        EditCharacter,
-        DeleteCharacter,
-        StartGame,
-        Test,
-        ExitGame
-    }
-
-    public enum AddButtonMode
-    {
-        Top,
-        Left,
-        Right,
-        Bottom,
-        Center,
     }
 
     public enum GameScreen

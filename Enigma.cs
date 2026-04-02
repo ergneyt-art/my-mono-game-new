@@ -13,16 +13,21 @@ namespace MyMonoGame
         private SpriteFont _font;
 
         private Texture2D _pixel;
-        private BaseMenu _currentScreen;
+        private BaseMenu<ScreenAction> _currentScreen;
         private MainMenuScreen _mainMenuScreen;
         private LoadGameMenu _loadGameMenu;
         private SettingsMenu _settingsMenu;
         private AboutGameMenu _aboutMenu;
         private PartyMenuScreen _characterMenuScreen;
 
+        private const int _defaultScreenWidth = 1280;
+        private const int _defaultScreenHeight = 800;
+
         public Enigma()
         {
             _graphics = new GraphicsDeviceManager(this);
+            _graphics.PreferredBackBufferWidth = _defaultScreenWidth;
+            _graphics.PreferredBackBufferHeight = _defaultScreenHeight;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -40,11 +45,11 @@ namespace MyMonoGame
             _font = Content.Load<SpriteFont>("DefaultFont");
             _pixel = new Texture2D(GraphicsDevice, 1, 1);
             _pixel.SetData(new[] { Color.White });
-            _mainMenuScreen = new MainMenuScreen("Main menu", GraphicsDevice.Viewport, _font, _pixel);
-            _loadGameMenu = new LoadGameMenu("Load Game", GraphicsDevice.Viewport, _font, _pixel);
-            _settingsMenu = new SettingsMenu("Settings", GraphicsDevice.Viewport, _font, _pixel);
-            _aboutMenu = new AboutGameMenu("About game", GraphicsDevice.Viewport, _font, _pixel);
-            _characterMenuScreen = new PartyMenuScreen("Character menu", GraphicsDevice.Viewport, _font, _pixel);
+            _mainMenuScreen = new MainMenuScreen("Main menu", GraphicsDevice.Viewport.Bounds, _font, _pixel);
+            _loadGameMenu = new LoadGameMenu("Load Game", GraphicsDevice.Viewport.Bounds, _font, _pixel);
+            _settingsMenu = new SettingsMenu("Settings", GraphicsDevice.Viewport.Bounds, _font, _pixel);
+            _aboutMenu = new AboutGameMenu("About game", GraphicsDevice.Viewport.Bounds, _font, _pixel);
+            _characterMenuScreen = new PartyMenuScreen("Character menu", GraphicsDevice.Viewport.Bounds, _font, _pixel);
             _currentScreen = _mainMenuScreen;
 
             // TODO: use this.Content to load your game content here

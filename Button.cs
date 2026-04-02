@@ -10,12 +10,12 @@ using MyMonoGame.MenuClasses;
 
 namespace MyMonoGame
 {
-    public class Button
+    public class Button<T> where T : Enum
     {
+        public T Action { get; set; }
         public Rectangle Bounds { get; private set; }
         public string Text { get; private set; }
-        public ScreenAction Action { get; private set; }
-
+        public bool IsClicked { get; private set; }
         public bool IsVisible { get; private set; } = true;
         public bool IsEnabled { get; private set; } = true;
         public bool IsHovered { get; private set; }
@@ -28,12 +28,12 @@ namespace MyMonoGame
 
         private MouseState _previousMouse;
 
-        public Button(Rectangle bounds, ScreenAction action, string text, SpriteFont font)
+        public Button(Rectangle bounds, T action, string text, SpriteFont font)
         {
             Bounds = bounds;
             Text = text;
-            Action = action;
             RecalculateTextPosition(text, font);
+            Action = action;
         }
 
         private void RecalculateTextPosition(string text, SpriteFont font)
@@ -67,7 +67,7 @@ namespace MyMonoGame
             this.IsEnabled = enabled;
         }
 
-        public ScreenAction Update() 
+        public void Update() 
         {
             if (this.IsVisible && this.IsEnabled)
             {
@@ -78,13 +78,17 @@ namespace MyMonoGame
 
                 _previousMouse = mouse;
 
-                if (IsHovered && leftClicked) return Action;
+                if (IsHovered && leftClicked)
+                {
+                    IsClicked = true;
+                    return;
+                }
             }
             else
             {
                 this.IsHovered = false;
             }
-            return ScreenAction.None;
+            IsClicked = false;
         }
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font, Texture2D pixel)

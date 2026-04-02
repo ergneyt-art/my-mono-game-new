@@ -20,7 +20,6 @@ namespace MyMonoGame.MenuClasses
             this.AddButtonToCenterPanel("Settings", ScreenAction.GoToSettingsMenu, AddButtonMode.Bottom);
             this.AddButtonToCenterPanel("About Game", ScreenAction.GoToAboutGameMenu, AddButtonMode.Bottom);
             this.AddButtonToCenterPanel("Exit", ScreenAction.ExitGame, AddButtonMode.Bottom);
-
             this.AddButtonToCenterPanel("Test", ScreenAction.Test, AddButtonMode.Bottom);
         }
 
@@ -45,6 +44,8 @@ namespace MyMonoGame.MenuClasses
                 {
                     _infoDialog = new InfoDialog("Test", _font, "This is a test dialog.", _menuLayout.ContentContainer);
                     TurnOffAllButtons();
+                    _infoDialog.AddButton(InfoDialogResult.Ok, "OK", _font);
+                    _infoDialog.AddButton(InfoDialogResult.Cancel, "Cancel", _font);
                     _infoDialog.Open();
                     return ScreenAction.None;
                 }
@@ -59,17 +60,14 @@ namespace MyMonoGame.MenuClasses
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            SetTitle(spriteBatch);
             if (_infoDialog != null) 
             {
                 _infoDialog.Draw(spriteBatch, _font, _pixel);
             }
-            else
+            foreach (var button in _buttons)
             {
-                SetTitle(spriteBatch);
-                foreach (var button in _buttons)
-                {
-                    button.Draw(spriteBatch, _font, _pixel);
-                }
+                button.Draw(spriteBatch, _font, _pixel);
             }
         }
     }

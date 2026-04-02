@@ -13,6 +13,9 @@ namespace MyMonoGame.MenuClasses
     public abstract class BaseMenu<T> where T : Enum
     {
         protected string Title;
+        protected List<Button<T>> _leftPanelButtons;
+        protected List<Button<T>> _rightPanelButtons;
+        protected List<Button<T>> _centerPanelButtons;
         protected List<Button<T>> _buttons;
         protected SpriteFont _font;
         protected Texture2D _pixel;
@@ -29,8 +32,12 @@ namespace MyMonoGame.MenuClasses
             _font = font;
             _pixel = pixel;
             _buttons = new List<Button<T>>();
+            _leftPanelButtons = new List<Button<T>>();
+            _centerPanelButtons = new List<Button<T>>();
+            _rightPanelButtons = new List<Button<T>>();
         }
 
+        /*
         protected void ShowInfoWindow(string message, SpriteBatch spriteBatch)
         {
             Vector2 size = _font.MeasureString(message);
@@ -39,6 +46,7 @@ namespace MyMonoGame.MenuClasses
             var position = new Vector2(x_axis, y_axis);
             spriteBatch.DrawString(_font, message, position, Color.White);
         }
+        */
 
         virtual protected void ButtonsEnabledManage()
         {
@@ -66,7 +74,7 @@ namespace MyMonoGame.MenuClasses
 
         public void HideRightPanelButtons()
         {
-            foreach (var button in _buttons)
+            foreach (var button in _rightPanelButtons)
             {
                 if (button.Bounds.Intersects(_menuLayout.RightPanel))
                 {
@@ -77,7 +85,7 @@ namespace MyMonoGame.MenuClasses
 
         public void HideLeftPanelButtons()
         {
-            foreach (var button in _buttons)
+            foreach (var button in _leftPanelButtons)
             {
                 if (button.Bounds.Intersects(_menuLayout.LeftPanel))
                 {
@@ -88,7 +96,7 @@ namespace MyMonoGame.MenuClasses
 
         public void HideCenterPanelButtons()
         {
-            foreach (var button in _buttons)
+            foreach (var button in _centerPanelButtons)
             {
                 if (button.Bounds.Intersects(_menuLayout.ContentContainer))
                 {
@@ -115,75 +123,46 @@ namespace MyMonoGame.MenuClasses
 
         protected void AddButtonToRightPanel(string text, T action, int width = _defaultButtonWidth, int height = _defaultButtonHeight)
         {
-            if (_menuLayout.RightPanel.Bottom < (_menuLayout.RightPanelCurrentY + _spacing + height))
-            {
-                throw new InvalidOperationException("Not enough space to add more buttons to the right panel.");
-            }
-
-            _menuLayout.RightPanelCurrentY += _spacing;
-
-            int x_axis = (int)(_menuLayout.RightPanel.Center.X - width / 2);
-            int y_axis = _menuLayout.RightPanelCurrentY;
-            var button = new Button<T>(new Rectangle(x_axis, y_axis, width, height), action, text, _font);
-
-            _menuLayout.RightPanelCurrentY += height;
+            var rect = _menuLayout.GetNextRightPanelRect(width, height, _spacing);
+            var button = new Button<T>(rect, action, text, _font);
+            _rightPanelButtons.Add(button);
             _buttons.Add(button);
         }
 
         protected void AddButtonToLeftPanel(string text, T action, int width = _defaultButtonWidth, int height = _defaultButtonHeight)
         {
-            if (_menuLayout.LeftPanel.Bottom < (_menuLayout.LeftPanelCurrentY + _spacing + height))
-            {
-                throw new InvalidOperationException("Not enough space to add more buttons to the left panel.");
-            }
-            _menuLayout.LeftPanelCurrentY += _spacing;
-            int x_axis = (int)(_menuLayout.LeftPanel.Center.X - width / 2);
-            int y_axis = _menuLayout.LeftPanelCurrentY;
-            var button = new Button<T>(new Rectangle(x_axis, y_axis, width, height), action, text, _font);
-            _menuLayout.LeftPanelCurrentY += height;
+            var rect = _menuLayout.GetNextLeftPanelRect(width, height, _spacing);
+            var button = new Button<T>(rect, action, text, _font);
+            _leftPanelButtons.Add(button);
             _buttons.Add(button);
         }
 
         protected void AddButtonToCenterPanel(string text, T action, AddButtonMode mode = AddButtonMode.Center, int width = _defaultButtonWidth, int height = _defaultButtonHeight)
         {
-            var x = 0;
-            var y = 0;
+            Rectangle rect = default; 
+
             switch (mode)
             {
                 case AddButtonMode.Center:
-                    x = _menuLayout.ContentContainer.Center.X - width / 2;
-                    y = _menuLayout.ContentContainerCurrentY + _spacing;
-                    _buttons.Add(CreateButton(x, y, width, height, text, action, _font));
-                    _menuLayout.ContentContainerCurrentY += height + _spacing;
+                    rect = _menuLayout.GetNextContentCenterRect(width, height, _spacing);
                     break;
                 case AddButtonMode.Left:
-                    x = _spacing;
-                    y = _menuLayout.ContentContainerCurrentY + _spacing;
-                    _buttons.Add(CreateButton(x, y, width, height, text, action, _font));
-                    _menuLayout.ContentContainerCurrentY += height + _spacing;
                     break;
                 case AddButtonMode.Right:
-                    x = _menuLayout.ContentContainer.Right - _spacing;
-                    y = _menuLayout.ContentContainerCurrentY + _spacing;
-                    _buttons.Add(CreateButton(x, y, width, height, text, action, _font));
-                    _menuLayout.ContentContainerCurrentY += height + _spacing;
                     break;
                 case AddButtonMode.Top:
-                    x = _menuLayout.ContentContainerCurrentX + _spacing;
-                    y = _menuLayout.ContentContainer.Top + _spacing;
-                    _buttons.Add(CreateButton(x, y, width, height, text, action, _font));
-                    _menuLayout.ContentContainerCurrentX += _spacing + width;
+                    rect = _menuLayout.GetNextContentTopRect(width, height, _spacing);
                     break;
                 case AddButtonMode.Bottom:
-                    x = _menuLayout.ContentContainerCurrentX + _spacing;
-                    y = _menuLayout.ContentContainer.Bottom - height - _spacing;
-                    _buttons.Add(CreateButton(x, y, width, height, text, action, _font));
-                    _menuLayout.ContentContainerCurrentX += _spacing + width;
+                    rect = _menuLayout.GetNextContentBottomRect(width, height, _spacing);
                     break;
                 default:
                     throw new ArgumentException("Invalid AddButtonMode value.");
-
             }
+
+            var button = new Button<T>(rect, action, text, _font);
+            _leftPanelButtons.Add(button);
+            _buttons.Add(button);
         }
 
         private Button<T> CreateButton(int x, int y, int width, int height, string text, T action, SpriteFont font) 

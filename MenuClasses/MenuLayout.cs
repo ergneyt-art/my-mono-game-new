@@ -54,22 +54,109 @@ namespace MyMonoGame.MenuClasses
 
         private void ApplyConfig(Rectangle frame)
         {
+            var width = (int)(frame.Width * Config.ProcentFrame);
+            var height = (int)(frame.Height * Config.ProcentFrame);
+
             Screen = new Rectangle(
-                (int)(frame.Center.X - ((frame.Width * Config.ProcentFrame) / 2)),
-                (int)(frame.Center.Y - ((frame.Height * Config.ProcentFrame) / 2)),
-                (int)(frame.Width * Config.ProcentFrame),
-                (int)(frame.Height * Config.ProcentFrame)
+                (int)(frame.Center.X - (width / 2)),
+                (int)(frame.Center.Y - (height / 2)),
+                width,
+                height
             );
-            HeaderContainer = new Rectangle(Screen.Left, Screen.Top, Screen.Width, (int)(Screen.Height * Config.HeaderContainerHeight));
-            FooterContainer = new Rectangle(Screen.Left, Screen.Height - (int)(Screen.Height * Config.FootContainerHeight), Screen.Width, (int)(Screen.Height * Config.FootContainerHeight));
-            Body = new Rectangle(Screen.Left, Screen.Height - HeaderContainer.Height, Screen.Width, Screen.Height - HeaderContainer.Height - FooterContainer.Height);
-            LeftPanel = new Rectangle(Screen.Left, HeaderContainer.Height, (int)(Body.Width * Config.LeftPanelWidth), Body.Height);
-            ContentContainer = new Rectangle(LeftPanel.Width, HeaderContainer.Height, (int)(Body.Width * Config.ContentContainerWidth), Body.Height);
-            RightPanel = new Rectangle(LeftPanel.Width + ContentContainer.Width, HeaderContainer.Height, (int)(Body.Width * Config.RightPanelWidth), Body.Height);
+
+            var headerContainerHeight = (int)(Screen.Height * Config.HeaderContainerHeight);
+            var footerContainerHeight = (int)(Screen.Height * Config.FootContainerHeight);
+
+            HeaderContainer = new Rectangle(Screen.Left, Screen.Top, Screen.Width, headerContainerHeight);
+            FooterContainer = new Rectangle(Screen.Left, Screen.Bottom - footerContainerHeight, Screen.Width, footerContainerHeight);
+
+            var bodyHeight = Screen.Height - headerContainerHeight - footerContainerHeight;
+
+            Body = new Rectangle(Screen.Left, HeaderContainer.Bottom, Screen.Width, bodyHeight);
+
+            var leftPanelWidth = (int)(Body.Width * Config.LeftPanelWidth);
+            var rightPanelWidth = (int)(Body.Width * Config.RightPanelWidth);
+
+            LeftPanel = new Rectangle(Body.Left, Body.Top, leftPanelWidth, Body.Height);
+            RightPanel = new Rectangle(Body.Right - rightPanelWidth, Body.Top, rightPanelWidth, Body.Height);
+
+            ContentContainer = new Rectangle(LeftPanel.Right, Body.Top, RightPanel.Left - LeftPanel.Right, Body.Height);
+
             LeftPanelCurrentY = LeftPanel.Top;
             RightPanelCurrentY = RightPanel.Top;
             ContentContainerCurrentX = ContentContainer.Left;
             ContentContainerCurrentY = ContentContainer.Top;
+        }
+
+        public Rectangle GetNextLeftPanelRect(int width, int height, int spacing)
+        {
+            var isHaveFreeSpace = LeftPanelCurrentY + spacing + height;
+            if (isHaveFreeSpace > LeftPanel.Bottom) 
+            {
+                throw new InvalidOperationException("Not enough space to add more buttons to the left panel.");
+            }
+
+            int x = (int)(RightPanel.Center.X - width / 2);
+            int y = LeftPanelCurrentY + spacing;
+            var rect = new Rectangle(x, y, width, height);
+            LeftPanelCurrentY += (spacing + height);
+            return rect;
+        }
+
+        public Rectangle GetNextRightPanelRect(int width, int height, int spacing)
+        {
+            var isHaveFreeSpace = RightPanelCurrentY + spacing + height;
+            if (isHaveFreeSpace > RightPanel.Bottom)
+            {
+                throw new InvalidOperationException("Not enough space to add more buttons to the right panel.");
+            }
+            int x = (int)(RightPanel.Center.X - width / 2);
+            int y = RightPanelCurrentY + spacing;
+            var rect = new Rectangle(x, y, width, height);
+            RightPanelCurrentY += (spacing + height);
+            return rect;
+        }
+
+        public Rectangle GetNextContentBottomRect(int width, int height, int spacing)
+        {
+            var isHaveFreeSpace = ContentContainerCurrentX + spacing + width;
+            if (isHaveFreeSpace > ContentContainer.Right)
+            {
+                throw new InvalidOperationException("Not enough space to add more buttons to the content container.");
+            }
+            int x = ContentContainerCurrentX + spacing;
+            int y = ContentContainer.Bottom - (spacing + height);
+            var rect = new Rectangle(x, y, width, height);
+            ContentContainerCurrentX += (spacing + width);
+            return rect;
+        }
+
+        public Rectangle GetNextContentTopRect(int width, int height, int spacing)
+        {
+            var isHaveFreeSpace = ContentContainerCurrentX + spacing + width;
+            if (isHaveFreeSpace > ContentContainer.Right)
+            {
+                throw new InvalidOperationException("Not enough space to add more buttons to the content container.");
+            }
+            int x = ContentContainerCurrentX + spacing;
+            int y = ContentContainer.Top + spacing;
+            var rect = new Rectangle(x, y, width, height);
+            ContentContainerCurrentX += (spacing + width);
+            return rect;
+        }
+
+        public Rectangle GetNextContentCenterRect(int width, int height, int spacing)
+        {
+            var isHaveFreeSpace = ContentContainerCurrentY + spacing + height;
+            if (isHaveFreeSpace > ContentContainer.Bottom)
+            {
+                throw new InvalidOperationException("Not enough space to add more buttons to the content container.");
+            }
+            int x = ContentContainer.Center.X - width / 2;
+            int y = ContentContainerCurrentY + spacing;
+            var rect = new Rectangle(x, y, width, height);
+            ContentContainerCurrentY += (spacing + height);
+            return rect;
         }
     }
 
@@ -81,18 +168,6 @@ namespace MyMonoGame.MenuClasses
         public double FootContainerHeight;
         public double LeftPanelWidth;
         public double RightPanelWidth;
-
-        /*
-        public MenuLayoutConfig(double procentFrame, double headerContainerHeight, double contentContainerWidth, double footContainerHeight, double leftPanelWidth, double rightPanelWidth)
-        {
-            ProcentFrame = procentFrame;
-            HeaderContainerHeight = headerContainerHeight;
-            ContentContainerWidth = contentContainerWidth;
-            FootContainerHeight = footContainerHeight;
-            LeftPanelWidth = leftPanelWidth;
-            RightPanelWidth = rightPanelWidth;
-        }
-        */
     }
 
 }

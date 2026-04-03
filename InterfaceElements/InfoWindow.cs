@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MyMonoGame.MenuClasses;
+using MyMonoGame.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace MyMonoGame
+namespace MyMonoGame.InterfaceElements
 {
     public class InfoDialog
     {
@@ -37,9 +37,6 @@ namespace MyMonoGame
             Buttons = new List<Button<InfoDialogResult>>();
             var config = windowConfig == default ? _defaultConfig : windowConfig;
             _layout = new MenuLayout(frame, config);
-            // var rect = _layout.GetNextContentBottomRect(60, 30, 10);
-            // var testButton = new Rectangle(_layout.FooterContainer.Center.X, _layout.FooterContainer.Center.Y, 60, 30);
-            // Buttons.Add(new Button<InfoDialogResult>(rect, InfoDialogResult.Yes, "OK", font));
         }
 
         public void AddButton(InfoDialogResult action, string text, SpriteFont font, int width = _defaultButtonWidth, int height = _defaultButtonHeight)

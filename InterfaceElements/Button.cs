@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MyMonoGame.MenuClasses;
 
-namespace MyMonoGame
+namespace MyMonoGame.InterfaceElements
 {
     public class Button<T> where T : Enum
     {

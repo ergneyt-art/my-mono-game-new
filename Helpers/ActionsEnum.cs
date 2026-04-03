@@ -4,8 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyMonoGame
+namespace MyMonoGame.Helpers
 {
+    public enum SwitchFieldAction
+    {
+        None,
+        SwitchToNextValue,
+        SwitchToPreviousValue
+    }
+
     public enum ScreenAction
     {
         None,
@@ -14,6 +21,7 @@ namespace MyMonoGame
         GoToLoadGameMenu,
         GoToSettingsMenu,
         GoToAboutGameMenu,
+        GoToPartyMenu,
         StartGame,
         Test,
         ExitGame

@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MyMonoGame.GameObjects;
+using MyMonoGame.Helpers;
+using MyMonoGame.InterfaceElements;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,18 +17,31 @@ namespace MyMonoGame.MenuClasses
     public class PartyMenuScreen : BaseMenu<ScreenAction>
     {
         private List<CharacterSlotUI> _charSlots;
+        public Character CurrentChar { get; private set; }
 
         public PartyMenuScreen(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : 
             base(title, frame, font, pixel)
         {
             _charSlots = new List<CharacterSlotUI>();
-            AddButtonToLeftPanel("Back", ScreenAction.GoToMainMenu);
-            AddButtonToRightPanel("Start Game", ScreenAction.StartGame);
+            _leftPanelCursor.SetPosition(_menuLayout.LeftPanel.Center.X - _defaultButtonWidth / 2, _menuLayout.LeftPanel.Top + _defaultSpacing);
+            _leftPanelButtons.Add(AddButton("Back", ScreenAction.GoToMainMenu, _leftPanelCursor));
+            _rightPanelCursor.SetPosition(_menuLayout.RightPanel.Center.X - _defaultButtonWidth / 2, _menuLayout.RightPanel.Top + _defaultSpacing);
+            _rightPanelButtons.Add(AddButton("Start Game", ScreenAction.StartGame, _rightPanelCursor));
             var slotSize = this._menuLayout.ContentContainer.Width / 4;
 
             for (int i = 0; i < 4; i++)
             {
-                var characterFrame = new Rectangle(this._menuLayout.ContentContainer.Left + (slotSize * i), _menuLayout.ContentContainer.Top, slotSize, _menuLayout.ContentContainer.Height);
+                Rectangle characterFrame = default;
+                if (i == 0)
+                {
+                    characterFrame = new Rectangle(this._menuLayout.ContentContainer.Left, _menuLayout.ContentContainer.Top, slotSize, _menuLayout.ContentContainer.Height);
+                }
+                else
+                {
+                    var previousSlot = _charSlots[i - 1];
+                    characterFrame = new Rectangle(previousSlot.Slot.Right, _menuLayout.ContentContainer.Top, slotSize, _menuLayout.ContentContainer.Height);
+
+                }
                 _charSlots.Add(new CharacterSlotUI(characterFrame, _font));
             }
 
@@ -77,6 +93,20 @@ namespace MyMonoGame.MenuClasses
                 slot.CreateButton.Update();
                 slot.ChangeButton.Update();
                 slot.DeleteButton.Update();
+
+                if (slot.CreateButton.IsClicked) 
+                {
+                    CurrentChar = new Character();
+                    return ScreenAction.GoToCharacterMenu;
+                }
+                else if (slot.CreateButton.IsClicked)                {
+                    CurrentChar = slot.Character;
+                    return ScreenAction.GoToCharacterMenu;
+                }
+                else if (slot.DeleteButton.IsClicked)
+                {
+                    slot.Character = null;
+                }
             }
             return ScreenAction.None;
         }

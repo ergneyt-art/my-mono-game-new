@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MyMonoGame.GameObjects;
+using MyMonoGame.Helpers;
 using MyMonoGame.MenuClasses;
 using System;
 using System.Collections.Generic;
@@ -8,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace MyMonoGame
+namespace MyMonoGame.InterfaceElements
 {
     public class CharacterSlotUI
     {

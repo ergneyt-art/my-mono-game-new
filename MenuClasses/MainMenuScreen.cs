@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MyMonoGame.GameObjects;
+using MyMonoGame.Helpers;
+using MyMonoGame.InterfaceElements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +14,18 @@ namespace MyMonoGame.MenuClasses
 {
     public class MainMenuScreen : BaseMenu<ScreenAction>
     {
+        private SwitchField<CharacterClass> _characterClass;
         public MainMenuScreen(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : 
             base(title, frame, font, pixel)
         {
-            _spacing = 10;
-            this.AddButtonToCenterPanel("Start Game", ScreenAction.GoToCharacterMenu, AddButtonMode.Bottom);
-            this.AddButtonToCenterPanel("Load Game", ScreenAction.GoToLoadGameMenu, AddButtonMode.Bottom);
-            this.AddButtonToCenterPanel("Settings", ScreenAction.GoToSettingsMenu, AddButtonMode.Bottom);
-            this.AddButtonToCenterPanel("About Game", ScreenAction.GoToAboutGameMenu, AddButtonMode.Bottom);
-            this.AddButtonToCenterPanel("Exit", ScreenAction.ExitGame, AddButtonMode.Bottom);
-            this.AddButtonToCenterPanel("Test", ScreenAction.Test, AddButtonMode.Bottom);
+            _centerPanelCursor.SetPosition(_menuLayout.ContentContainer.Center.X - _defaultButtonWidth / 2, _menuLayout.ContentContainer.Top + _defaultSpacing);
+            _centerPanelButtons.Add(AddButton("Start Game", ScreenAction.GoToPartyMenu, _centerPanelCursor));
+            _centerPanelButtons.Add(AddButton("Load Game", ScreenAction.GoToLoadGameMenu, _centerPanelCursor));
+            _centerPanelButtons.Add(AddButton("About Game", ScreenAction.GoToAboutGameMenu, _centerPanelCursor));
+            _centerPanelButtons.Add(AddButton("Settings", ScreenAction.GoToSettingsMenu, _centerPanelCursor));
+            _centerPanelButtons.Add(AddButton("Exit", ScreenAction.ExitGame, _centerPanelCursor));
+            var rect = _centerPanelCursor.GetNextRect(Direction.Down, 120, 100);
+            _characterClass = new SwitchField<CharacterClass>(rect, "Class", CharacterClass.Warrior, _font);
         }
 
         public override ScreenAction Update()
@@ -55,6 +60,8 @@ namespace MyMonoGame.MenuClasses
                 }
             }
 
+            _characterClass.Update();
+
             return ScreenAction.None;
         }
 
@@ -69,6 +76,7 @@ namespace MyMonoGame.MenuClasses
             {
                 button.Draw(spriteBatch, _font, _pixel);
             }
+            _characterClass.Draw(spriteBatch, _font, _pixel);
         }
     }
 }

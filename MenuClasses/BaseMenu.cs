@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MyMonoGame.Helpers;
+using MyMonoGame.InterfaceElements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +19,15 @@ namespace MyMonoGame.MenuClasses
         protected List<Button<T>> _rightPanelButtons;
         protected List<Button<T>> _centerPanelButtons;
         protected List<Button<T>> _buttons;
+
+        protected PanelCursor _leftPanelCursor;
+        protected PanelCursor _rightPanelCursor;
+        protected PanelCursor _centerPanelCursor;
+
         protected SpriteFont _font;
         protected Texture2D _pixel;
         protected MenuLayout _menuLayout;
-        protected int _spacing = 10;
+        protected const int _defaultSpacing = 10;
         protected const int _defaultButtonWidth = 100;
         protected const int _defaultButtonHeight = 50;
         protected InfoDialog _infoDialog;
@@ -35,18 +42,10 @@ namespace MyMonoGame.MenuClasses
             _leftPanelButtons = new List<Button<T>>();
             _centerPanelButtons = new List<Button<T>>();
             _rightPanelButtons = new List<Button<T>>();
+            _leftPanelCursor = new PanelCursor(_menuLayout.LeftPanel);
+            _centerPanelCursor = new PanelCursor(_menuLayout.ContentContainer);
+            _rightPanelCursor = new PanelCursor(_menuLayout.RightPanel);
         }
-
-        /*
-        protected void ShowInfoWindow(string message, SpriteBatch spriteBatch)
-        {
-            Vector2 size = _font.MeasureString(message);
-            float x_axis = _menuLayout.ContentContainer.Center.X - size.X / 2;
-            float y_axis = _menuLayout.ContentContainer.Center.Y - size.Y / 2;
-            var position = new Vector2(x_axis, y_axis);
-            spriteBatch.DrawString(_font, message, position, Color.White);
-        }
-        */
 
         virtual protected void ButtonsEnabledManage()
         {
@@ -121,81 +120,23 @@ namespace MyMonoGame.MenuClasses
             }
         }
 
-        protected void AddButtonToRightPanel(string text, T action, int width = _defaultButtonWidth, int height = _defaultButtonHeight)
+        protected Button<T> AddButton(string text, T action, PanelCursor panelCursor, Direction direction = Direction.Down, int width = _defaultButtonWidth, int height = _defaultButtonHeight, int spacing = _defaultSpacing)
         {
-            var rect = _menuLayout.GetNextRightPanelRect(width, height, _spacing);
+            var rect = panelCursor.GetNextRect(direction, width, height, spacing);
             var button = new Button<T>(rect, action, text, _font);
-            _rightPanelButtons.Add(button);
             _buttons.Add(button);
+            return button;
         }
-
-        protected void AddButtonToLeftPanel(string text, T action, int width = _defaultButtonWidth, int height = _defaultButtonHeight)
-        {
-            var rect = _menuLayout.GetNextLeftPanelRect(width, height, _spacing);
-            var button = new Button<T>(rect, action, text, _font);
-            _leftPanelButtons.Add(button);
-            _buttons.Add(button);
-        }
-
-        protected void AddButtonToCenterPanel(string text, T action, AddButtonMode mode = AddButtonMode.Center, int width = _defaultButtonWidth, int height = _defaultButtonHeight)
-        {
-            Rectangle rect = default; 
-
-            switch (mode)
-            {
-                case AddButtonMode.Center:
-                    rect = _menuLayout.GetNextContentCenterRect(width, height, _spacing);
-                    break;
-                case AddButtonMode.Left:
-                    break;
-                case AddButtonMode.Right:
-                    break;
-                case AddButtonMode.Top:
-                    rect = _menuLayout.GetNextContentTopRect(width, height, _spacing);
-                    break;
-                case AddButtonMode.Bottom:
-                    rect = _menuLayout.GetNextContentBottomRect(width, height, _spacing);
-                    break;
-                default:
-                    throw new ArgumentException("Invalid AddButtonMode value.");
-            }
-
-            var button = new Button<T>(rect, action, text, _font);
-            _leftPanelButtons.Add(button);
-            _buttons.Add(button);
-        }
-
-        private Button<T> CreateButton(int x, int y, int width, int height, string text, T action, SpriteFont font) 
-        {
-            var newButton = new Button<T>(new Rectangle(x, y, width, height), action, text, _font);
-            foreach (var bottom in _buttons)
-            {
-                if (bottom.IsVisible && bottom.Bounds.Contains(newButton.Bounds))
-                {
-                    throw new InvalidOperationException("New button overlaps with an existing button. Please adjust the layout or reduce the number of buttons.");
-                }
-            }
-            return newButton;
-        }
-
         #endregion
 
 
-        protected void SetTitle(SpriteBatch spriteBatch)
+        protected void SetTitle(SpriteBatch spriteBatch, int spacing = _defaultSpacing)
         {
             Vector2 size = _font.MeasureString(Title);
             float x_axis = _menuLayout.HeaderContainer.Center.X - size.X / 2;
-            float y_axis = size.Y + _spacing;
+            float y_axis = size.Y + spacing;
             var position = new Vector2(x_axis, y_axis);
             spriteBatch.DrawString(_font, Title, position, Color.White);
         }
-    }
-
-    public enum GameScreen
-    {
-        MainMenu,
-        LoadGameMenu,
-        SettingsMenu,
-        CharacterMenu,
     }
 }

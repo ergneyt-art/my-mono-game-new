@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyMonoGame.MenuClasses
+namespace MyMonoGame.InterfaceElements
 {
     public class MenuLayout
     {

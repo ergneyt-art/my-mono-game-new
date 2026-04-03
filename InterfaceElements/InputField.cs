@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyMonoGame
+namespace MyMonoGame.InterfaceElements
 {
-    public class infoWindowLayout
+    public class InputField
     {
 
     }

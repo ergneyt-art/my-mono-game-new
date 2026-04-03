@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MyMonoGame.Helpers;
 using MyMonoGame.MenuClasses;
 using System;
 
@@ -18,7 +19,7 @@ namespace MyMonoGame
         private LoadGameMenu _loadGameMenu;
         private SettingsMenu _settingsMenu;
         private AboutGameMenu _aboutMenu;
-        private PartyMenuScreen _characterMenuScreen;
+        private PartyMenuScreen _partyMenuScreen;
 
         private const int _defaultScreenWidth = 1280;
         private const int _defaultScreenHeight = 800;
@@ -49,7 +50,7 @@ namespace MyMonoGame
             _loadGameMenu = new LoadGameMenu("Load Game", GraphicsDevice.Viewport.Bounds, _font, _pixel);
             _settingsMenu = new SettingsMenu("Settings", GraphicsDevice.Viewport.Bounds, _font, _pixel);
             _aboutMenu = new AboutGameMenu("About game", GraphicsDevice.Viewport.Bounds, _font, _pixel);
-            _characterMenuScreen = new PartyMenuScreen("Character menu", GraphicsDevice.Viewport.Bounds, _font, _pixel);
+            _partyMenuScreen = new PartyMenuScreen("Character menu", GraphicsDevice.Viewport.Bounds, _font, _pixel);
             _currentScreen = _mainMenuScreen;
 
             // TODO: use this.Content to load your game content here
@@ -81,11 +82,14 @@ namespace MyMonoGame
                 case ScreenAction.GoToAboutGameMenu:
                     _currentScreen = _aboutMenu;
                     break;
-                case ScreenAction.GoToCharacterMenu:
-                    _currentScreen = _characterMenuScreen;
+                case ScreenAction.GoToPartyMenu:
+                    _currentScreen = _partyMenuScreen;
                     break;
                 case ScreenAction.GoToSettingsMenu:
                     _currentScreen = _settingsMenu;
+                    break;
+                case ScreenAction.GoToCharacterMenu:
+                    _currentScreen = _partyMenuScreen;
                     break;
                 case ScreenAction.ExitGame:
                     this.Exit();

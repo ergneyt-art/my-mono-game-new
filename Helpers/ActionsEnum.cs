@@ -23,6 +23,7 @@ namespace MyMonoGame.Helpers
         GoToAboutGameMenu,
         GoToPartyMenu,
         StartGame,
+        SaveCharacter,
         Test,
         ExitGame
     }

@@ -77,7 +77,7 @@ namespace MyMonoGame.MenuClasses
             {
                 if (button.Bounds.Intersects(_menuLayout.RightPanel))
                 {
-                    button.HideButton();
+                    button.HideElement();
                 }
             }
         }
@@ -88,7 +88,7 @@ namespace MyMonoGame.MenuClasses
             {
                 if (button.Bounds.Intersects(_menuLayout.LeftPanel))
                 {
-                    button.HideButton();
+                    button.HideElement();
                 }
             }
         }
@@ -99,7 +99,7 @@ namespace MyMonoGame.MenuClasses
             {
                 if (button.Bounds.Intersects(_menuLayout.ContentContainer))
                 {
-                    button.HideButton();
+                    button.HideElement();
                 }
             }
         }
@@ -108,7 +108,7 @@ namespace MyMonoGame.MenuClasses
         {
             foreach (var button in _buttons)
             {
-                button.HideButton();
+                button.HideElement();
             }
         }
 

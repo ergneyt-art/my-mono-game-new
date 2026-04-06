@@ -87,7 +87,7 @@ namespace MyMonoGame.InterfaceElements
             // Draw buttons
             foreach (var button in Buttons)
             {
-                button.Draw(spriteBatch, font, pixel);
+                button.Draw(spriteBatch, pixel);
             }
         }
 

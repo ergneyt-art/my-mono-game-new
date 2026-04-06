@@ -15,6 +15,7 @@ namespace MyMonoGame.GameObjects
 
         public Character()
         {
+            Name = "New Character";
             Race = CharacterRace.Human;
             Class = CharacterClass.Warrior;
             Gender = CharacterGender.Male;

@@ -15,6 +15,7 @@ namespace MyMonoGame.MenuClasses
         {
             _leftPanelCursor.SetPosition(_menuLayout.LeftPanel.Center.X - _defaultButtonWidth / 2, _menuLayout.LeftPanel.Top + _defaultSpacing);
             _leftPanelButtons.Add(AddButton("Back", ScreenAction.GoToMainMenu, _leftPanelCursor));
+            _leftPanelButtons[0].TooltipText = "test tip";
         }
 
         public override ScreenAction Update()
@@ -33,7 +34,7 @@ namespace MyMonoGame.MenuClasses
             SetTitle(spriteBatch);
             foreach (var button in _buttons)
             {
-                button.Draw(spriteBatch, _font, _pixel);
+                button.Draw(spriteBatch, _pixel);
             }
         }
     }

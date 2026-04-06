@@ -33,7 +33,7 @@ namespace MyMonoGame.MenuClasses
             SetTitle(spriteBatch);
             foreach (var button in _buttons)
             {
-                button.Draw(spriteBatch, _font, _pixel);
+                button.Draw(spriteBatch, _pixel);
             }
         }
     }

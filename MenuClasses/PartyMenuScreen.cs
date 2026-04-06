@@ -19,6 +19,8 @@ namespace MyMonoGame.MenuClasses
         private List<CharacterSlotUI> _charSlots;
         public Character CurrentChar { get; private set; }
 
+        Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>> _characteresTexture;
+
         public PartyMenuScreen(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : 
             base(title, frame, font, pixel)
         {
@@ -39,13 +41,18 @@ namespace MyMonoGame.MenuClasses
                 else
                 {
                     var previousSlot = _charSlots[i - 1];
-                    characterFrame = new Rectangle(previousSlot.Slot.Right, _menuLayout.ContentContainer.Top, slotSize, _menuLayout.ContentContainer.Height);
+                    characterFrame = new Rectangle(previousSlot.Bounds.Right, _menuLayout.ContentContainer.Top, slotSize, _menuLayout.ContentContainer.Height);
 
                 }
                 _charSlots.Add(new CharacterSlotUI(characterFrame, _font));
             }
 
             ButtonsEnabledManage();
+        }
+
+        public void SetCharacterTexture(Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>> textures)
+        {
+            _characteresTexture = textures;
         }
 
         private void ManageButtons()
@@ -63,15 +70,15 @@ namespace MyMonoGame.MenuClasses
             {
                 if (slot.Character is null)
                 {
-                    slot.CreateButton.ShowButton();
-                    slot.ChangeButton.HideButton();
-                    slot.DeleteButton.HideButton();
+                    slot.CreateButton.ShowElement();
+                    slot.ChangeButton.HideElement();
+                    slot.DeleteButton.HideElement();
                 }
                 else
                 {
-                    slot.CreateButton.HideButton();
-                    slot.ChangeButton.ShowButton();
-                    slot.DeleteButton.ShowButton();
+                    slot.CreateButton.HideElement();
+                    slot.ChangeButton.ShowElement();
+                    slot.DeleteButton.ShowElement();
                 }
             }
         }
@@ -83,28 +90,37 @@ namespace MyMonoGame.MenuClasses
             {
                 button.Update();
                 if (button.IsClicked) 
-                { 
+                {
+                    if (button.Action == ScreenAction.GoToMainMenu) 
+                    {
+                        foreach (var slot in _charSlots)
+                        {
+                            slot.Character = null;
+                        }
+                        CurrentChar = null;
+                    }
                     return button.Action;
                 }
             }
 
             foreach (var slot in _charSlots)
             {
-                slot.CreateButton.Update();
-                slot.ChangeButton.Update();
-                slot.DeleteButton.Update();
+                slot.Update();
 
                 if (slot.CreateButton.IsClicked) 
                 {
-                    CurrentChar = new Character();
+                    slot.Character = new Character();
+                    CurrentChar = slot.Character;
                     return ScreenAction.GoToCharacterMenu;
                 }
-                else if (slot.CreateButton.IsClicked)                {
+                else if (slot.ChangeButton.IsClicked)                
+                {
                     CurrentChar = slot.Character;
                     return ScreenAction.GoToCharacterMenu;
                 }
                 else if (slot.DeleteButton.IsClicked)
                 {
+                    CurrentChar = null;
                     slot.Character = null;
                 }
             }
@@ -116,13 +132,12 @@ namespace MyMonoGame.MenuClasses
             SetTitle(spriteBatch);
             foreach (var button in _buttons) 
             {
-                button.Draw(spriteBatch, _font, _pixel);
+                button.Draw(spriteBatch, _pixel);
             }
             foreach(var slot in _charSlots)
             {
-                slot.CreateButton.Draw(spriteBatch, _font, _pixel);
-                slot.ChangeButton.Draw(spriteBatch, _font, _pixel);
-                slot.DeleteButton.Draw(spriteBatch, _font, _pixel);
+                var charTexture = slot.Character is not null ? _characteresTexture[slot.Character.Race][slot.Character.Gender] : null;
+                slot.Draw(spriteBatch, charTexture, _pixel);
             }
         }
 

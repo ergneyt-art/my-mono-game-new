@@ -14,7 +14,6 @@ namespace MyMonoGame.MenuClasses
 {
     public class MainMenuScreen : BaseMenu<ScreenAction>
     {
-        private SwitchField<CharacterClass> _characterClass;
         public MainMenuScreen(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : 
             base(title, frame, font, pixel)
         {
@@ -24,8 +23,7 @@ namespace MyMonoGame.MenuClasses
             _centerPanelButtons.Add(AddButton("About Game", ScreenAction.GoToAboutGameMenu, _centerPanelCursor));
             _centerPanelButtons.Add(AddButton("Settings", ScreenAction.GoToSettingsMenu, _centerPanelCursor));
             _centerPanelButtons.Add(AddButton("Exit", ScreenAction.ExitGame, _centerPanelCursor));
-            var rect = _centerPanelCursor.GetNextRect(Direction.Down, 120, 100);
-            _characterClass = new SwitchField<CharacterClass>(rect, "Class", CharacterClass.Warrior, _font);
+            _centerPanelButtons.Add(AddButton("Test Dialog", ScreenAction.Test, _centerPanelCursor));
         }
 
         public override ScreenAction Update()
@@ -59,24 +57,21 @@ namespace MyMonoGame.MenuClasses
                     return button.Action; 
                 }
             }
-
-            _characterClass.Update();
-
             return ScreenAction.None;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             SetTitle(spriteBatch);
-            if (_infoDialog != null) 
+            foreach (var button in _buttons)
+            {
+                button.Draw(spriteBatch, _pixel);
+            }
+
+            if (_infoDialog != null)
             {
                 _infoDialog.Draw(spriteBatch, _font, _pixel);
             }
-            foreach (var button in _buttons)
-            {
-                button.Draw(spriteBatch, _font, _pixel);
-            }
-            _characterClass.Draw(spriteBatch, _font, _pixel);
         }
     }
 }

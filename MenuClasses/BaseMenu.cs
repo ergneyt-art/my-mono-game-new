@@ -127,6 +127,61 @@ namespace MyMonoGame.MenuClasses
             _buttons.Add(button);
             return button;
         }
+
+        protected void AddButtonToLeftPanel(string label, T action, Direction direction = Direction.Down, int width = _defaultButtonWidth, int height = _defaultButtonHeight, int spacing = _defaultSpacing)
+        {
+            UpdateCursorPosition(_leftPanelButtons, _leftPanelCursor, _menuLayout.LeftPanel, direction, width, height, spacing);
+            var rect = _leftPanelCursor.GetNextRect(direction, width, height, spacing);
+            var button = new Button<T>(rect, action, label, _font);
+            _leftPanelButtons.Add(button);
+            _buttons.Add(button);
+        }
+
+        protected void AddButtonToRightPanel(string label, T action, Direction direction = Direction.Down, int width = _defaultButtonWidth, int height = _defaultButtonHeight, int spacing = _defaultSpacing)
+        {
+            UpdateCursorPosition(_rightPanelButtons, _rightPanelCursor, _menuLayout.RightPanel, direction, width, height, spacing);
+            var rect = _rightPanelCursor.GetNextRect(direction, width, height, spacing);
+            var button = new Button<T>(rect, action, label, _font);
+            _rightPanelButtons.Add(button);
+            _buttons.Add(button);
+        }
+
+        protected void AddButtonToCenterPanel(string label, T action, Direction direction = Direction.Down, int width = _defaultButtonWidth, int height = _defaultButtonHeight, int spacing = _defaultSpacing)
+        {
+            UpdateCursorPosition(_centerPanelButtons, _centerPanelCursor, _menuLayout.ContentContainer, direction, width, height, spacing);
+            var rect = _centerPanelCursor.GetNextRect(direction, width, height, spacing);
+            var button = new Button<T>(rect, action, label, _font);
+            _centerPanelButtons.Add(button);
+            _buttons.Add(button);
+        }
+
+        private int UpdateCursorPosition(List<Button<T>> buttons, PanelCursor cursor, Rectangle panel, Direction direction, int width, int height, int spacing)
+        {
+            var point = 0;
+            switch (direction)
+            {
+                case Direction.Up:
+                    point = buttons.Count > 0 ? buttons.Min(b => b.Bounds.Top) : panel.Bottom;
+                    cursor.SetPosition(panel.Center.X - width / 2, point - spacing);
+                    break;
+                case Direction.Down:
+                    point = buttons.Count > 0 ? buttons.Max(b => b.Bounds.Bottom) : panel.Top;
+                    cursor.SetPosition(panel.Center.X - width / 2, point + spacing);
+                    break;
+                case Direction.Left:
+                    point = buttons.Count > 0 ? buttons.Min(b => b.Bounds.Left) : panel.Right;
+                    cursor.SetPosition(point - spacing, panel.Center.Y - height / 2);
+                    break;
+                case Direction.Right:
+                    point = buttons.Count > 0 ? buttons.Max(b => b.Bounds.Right) : panel.Left;
+                    cursor.SetPosition(point + spacing, panel.Center.Y - height / 2);
+                    break;
+                default:
+                    break;
+            }
+            return point;
+        }
+
         #endregion
 
 

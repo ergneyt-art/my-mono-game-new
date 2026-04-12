@@ -17,6 +17,14 @@ namespace MyMonoGame.MenuClasses
         public MainMenuScreen(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : 
             base(title, frame, font, pixel)
         {
+            AddButtonToCenterPanel("Start Game", ScreenAction.GoToPartyMenu);
+            AddButtonToCenterPanel("Load Game", ScreenAction.GoToLoadGameMenu);
+            AddButtonToCenterPanel("About Game", ScreenAction.GoToAboutGameMenu);
+            AddButtonToCenterPanel("Settings", ScreenAction.GoToSettingsMenu);
+            AddButtonToCenterPanel("Exit", ScreenAction.ExitGame);
+            AddButtonToCenterPanel("Test Dialog", ScreenAction.Test);
+
+            /*
             _centerPanelCursor.SetPosition(_menuLayout.ContentContainer.Center.X - _defaultButtonWidth / 2, _menuLayout.ContentContainer.Top + _defaultSpacing);
             _centerPanelButtons.Add(AddButton("Start Game", ScreenAction.GoToPartyMenu, _centerPanelCursor));
             _centerPanelButtons.Add(AddButton("Load Game", ScreenAction.GoToLoadGameMenu, _centerPanelCursor));
@@ -24,6 +32,7 @@ namespace MyMonoGame.MenuClasses
             _centerPanelButtons.Add(AddButton("Settings", ScreenAction.GoToSettingsMenu, _centerPanelCursor));
             _centerPanelButtons.Add(AddButton("Exit", ScreenAction.ExitGame, _centerPanelCursor));
             _centerPanelButtons.Add(AddButton("Test Dialog", ScreenAction.Test, _centerPanelCursor));
+            */
         }
 
         public override ScreenAction Update()

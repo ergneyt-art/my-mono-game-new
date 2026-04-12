@@ -15,8 +15,9 @@ namespace MyMonoGame
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
 
+        public GameAssets Assets { get; private set; }
+
         private Texture2D _pixel;
-        private Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>> _characteresTexture;
         private BaseMenu<ScreenAction> _currentScreen;
         private MainMenuScreen _mainMenuScreen;
         private LoadGameMenu _loadGameMenu;
@@ -52,49 +53,18 @@ namespace MyMonoGame
             // Content.Load<Texture2D>("Characters/human-female");
             _pixel = new Texture2D(GraphicsDevice, 1, 1);
             _pixel.SetData(new[] { Color.White });
+            Assets = new GameAssets(Content);
             _mainMenuScreen = new MainMenuScreen("Main menu", GraphicsDevice.Viewport.Bounds, _font, _pixel);
             _loadGameMenu = new LoadGameMenu("Load Game", GraphicsDevice.Viewport.Bounds, _font, _pixel);
             _settingsMenu = new SettingsMenu("Settings", GraphicsDevice.Viewport.Bounds, _font, _pixel);
             _aboutMenu = new AboutGameMenu("About game", GraphicsDevice.Viewport.Bounds, _font, _pixel);
             _partyMenuScreen = new PartyMenuScreen("Party menu", GraphicsDevice.Viewport.Bounds, _font, _pixel);
             _characterEditorScreen = new CharacterEditorScreen("Character menu", GraphicsDevice.Viewport.Bounds, _font, _pixel);
-            LoadCharacterTexture();
-            _characterEditorScreen.SetCharacterTexture(_characteresTexture);
-            _partyMenuScreen.SetCharacterTexture(_characteresTexture);
+            _characterEditorScreen.SetCharacterTexture(Assets);
+            _partyMenuScreen.SetCharacterTexture(Assets);
             _currentScreen = _mainMenuScreen;
 
             // TODO: use this.Content to load your game content here
-        }
-
-        protected void LoadCharacterTexture()
-        {
-            _characteresTexture = new Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>>() 
-            {
-                {CharacterRace.Human, new Dictionary<CharacterGender, Texture2D>()
-                {
-                    { CharacterGender.Male, Content.Load<Texture2D>("Characters/human-male") },
-                    { CharacterGender.Female, Content.Load<Texture2D>("Characters/human-female") }
-                } 
-                },
-                {CharacterRace.Elf, new Dictionary<CharacterGender, Texture2D>()
-                {
-                    { CharacterGender.Male, Content.Load<Texture2D>("Characters/elf-male") },
-                    { CharacterGender.Female, Content.Load<Texture2D>("Characters/elf-female") },
-                }
-                },
-                {CharacterRace.Orc, new Dictionary<CharacterGender, Texture2D>()
-                {
-                    { CharacterGender.Male, Content.Load<Texture2D>("Characters/ork-male") },
-                    { CharacterGender.Female, Content.Load<Texture2D>("Characters/orc-female") },
-                }
-                },
-                {CharacterRace.Dwarf, new Dictionary<CharacterGender, Texture2D>()
-                {
-                    { CharacterGender.Male, Content.Load<Texture2D>("Characters/dwarf-male") },
-                    { CharacterGender.Female, Content.Load<Texture2D>("Characters/dwarf-female") },
-                }
-                },
-            };
         }
 
         protected override void Update(GameTime gameTime)

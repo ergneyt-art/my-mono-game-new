@@ -18,8 +18,7 @@ namespace MyMonoGame.MenuClasses
     {
         private List<CharacterSlotUI> _charSlots;
         public Character CurrentChar { get; private set; }
-
-        Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>> _characteresTexture;
+        private GameAssets _assets;
 
         public PartyMenuScreen(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : 
             base(title, frame, font, pixel)
@@ -50,9 +49,9 @@ namespace MyMonoGame.MenuClasses
             ButtonsEnabledManage();
         }
 
-        public void SetCharacterTexture(Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>> textures)
+        public void SetCharacterTexture(GameAssets assets)
         {
-            _characteresTexture = textures;
+            _assets = assets;
         }
 
         private void ManageButtons()
@@ -136,7 +135,7 @@ namespace MyMonoGame.MenuClasses
             }
             foreach(var slot in _charSlots)
             {
-                var charTexture = slot.Character is not null ? _characteresTexture[slot.Character.Race][slot.Character.Gender] : null;
+                var charTexture = slot.Character is not null ? _assets.GetCharacterTexture(slot.Character) : null;
                 slot.Draw(spriteBatch, charTexture, _pixel);
             }
         }

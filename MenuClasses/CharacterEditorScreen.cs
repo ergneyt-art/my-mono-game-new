@@ -21,7 +21,7 @@ namespace MyMonoGame.MenuClasses
         private TextBlock _raceInfo;
         private TextBlock _genderInfo;
         private InputField _characterName;
-        Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>> _characteresTexture;
+        private GameAssets _assets;
         private Texture2D _charTexture;
 
         public CharacterEditorScreen(string title, Rectangle frame, SpriteFont font, Texture2D pixel) :
@@ -42,9 +42,9 @@ namespace MyMonoGame.MenuClasses
             _characterName = new InputField(rect, _font);
         }
 
-        public void SetCharacterTexture(Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>> textures)
+        public void SetCharacterTexture(GameAssets assets)
         {
-            _characteresTexture = textures;
+            _assets = assets;
         }
 
         public void LoadCharacter(Character character)
@@ -96,9 +96,9 @@ namespace MyMonoGame.MenuClasses
 
         private void SetCharacterTexture()
         {
-            if (_characteresTexture is not null)
+            if (_assets is not null)
             {
-                _charTexture = _characteresTexture[_characterRace.Value][_characterGender.Value];
+                _charTexture = _assets.GetCharacterTexture(_characterRace.Value, _characterGender.Value);
             }
         }
                 

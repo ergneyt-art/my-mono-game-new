@@ -54,10 +54,8 @@ namespace MyMonoGame.MenuClasses
                 button.Update();
                 if (button.IsClicked && button.Action == ScreenAction.Test) 
                 {
-                    _infoDialog = new InfoDialog("Test", _font, "This is a test dialog.", _menuLayout.ContentContainer);
+                    _infoDialog = new InfoDialog(_menuLayout.ContentContainer, "Test", _font, "This is a test dialog. Random text here and here and here too. There is a enormous bunch of useless text. Yes!");
                     TurnOffAllButtons();
-                    _infoDialog.AddButton(InfoDialogResult.Ok, "OK", _font);
-                    _infoDialog.AddButton(InfoDialogResult.Cancel, "Cancel", _font);
                     _infoDialog.Open();
                     return ScreenAction.None;
                 }

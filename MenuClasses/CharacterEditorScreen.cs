@@ -23,20 +23,36 @@ namespace MyMonoGame.MenuClasses
         private InputField _characterName;
         private GameAssets _assets;
         private Texture2D _charTexture;
+        private readonly MenuLayoutConfig screenConfig = new MenuLayoutConfig
+        {
+            ProcentFrame = 1,
+            HeaderContainerHeight = 0.1,
+            FootContainerHeight = 0.1,
+            LeftPanelWidth = 0.25,
+            RightPanelWidth = 0.25,
+            ContentContainerWidth = 0.5
+        };
 
         public CharacterEditorScreen(string title, Rectangle frame, SpriteFont font, Texture2D pixel) :
-            base(title, frame, font, pixel)
+            base(title, new MenuLayoutConfig{
+                ProcentFrame = 1,
+                HeaderContainerHeight = 0.1,
+                FootContainerHeight = 0.1,
+                LeftPanelWidth = 0.25,
+                RightPanelWidth = 0.25,
+                ContentContainerWidth = 0.5
+            }, frame, font, pixel)
         {
             _leftPanelCursor.SetPosition(_menuLayout.LeftPanel.Center.X - _defaultButtonWidth / 2, _menuLayout.LeftPanel.Top + _defaultSpacing);
             _leftPanelButtons.Add(AddButton("Back", ScreenAction.GoToPartyMenu, _leftPanelCursor));
             _leftPanelButtons.Add(AddButton("Save", ScreenAction.SaveCharacter, _leftPanelCursor));
-            _rightPanelCursor.SetPosition(_menuLayout.RightPanel.Center.X - _defaultButtonWidth / 2, _menuLayout.RightPanel.Top + _defaultSpacing);
-            _characterClass = new SwitchField<CharacterClass>(_rightPanelCursor.GetNextRect(Direction.Down, 120, 100), "Class", CharacterClass.Warrior, _font);
-            _classInfo = new TextBlock(_rightPanelCursor.GetNextRect(Direction.Down, 120, 80), "Class Info", _font);
-            _characterRace = new SwitchField<CharacterRace>(_rightPanelCursor.GetNextRect(Direction.Down, 120, 100), "Race", CharacterRace.Human, _font);
-            _raceInfo = new TextBlock(_rightPanelCursor.GetNextRect(Direction.Down, 120, 80), "Class Info", _font);
-            _characterGender = new SwitchField<CharacterGender>(_rightPanelCursor.GetNextRect(Direction.Down, 120, 100), "Gender", CharacterGender.Male, _font);
-            _genderInfo = new TextBlock(_rightPanelCursor.GetNextRect(Direction.Down, 120, 80), "Class Info", _font);
+            _rightPanelCursor.SetPosition(_menuLayout.RightPanel.Left, _menuLayout.RightPanel.Top + _defaultSpacing);
+            _characterClass = new SwitchField<CharacterClass>(_rightPanelCursor.GetNextRect(Direction.Down, _menuLayout.RightPanel.Width, 100), "Class", CharacterClass.Warrior, _font);
+            _classInfo = new TextBlock(_rightPanelCursor.GetNextRect(Direction.Down, _menuLayout.RightPanel.Width, 80), "Class Info", _font);
+            _characterRace = new SwitchField<CharacterRace>(_rightPanelCursor.GetNextRect(Direction.Down, _menuLayout.RightPanel.Width  , 100), "Race", CharacterRace.Human, _font);
+            _raceInfo = new TextBlock(_rightPanelCursor.GetNextRect(Direction.Down, _menuLayout.RightPanel.Width, 80), "Class Info", _font);
+            _characterGender = new SwitchField<CharacterGender>(_rightPanelCursor.GetNextRect(Direction.Down, _menuLayout.RightPanel.Width, 100), "Gender", CharacterGender.Male, _font);
+            _genderInfo = new TextBlock(_rightPanelCursor.GetNextRect(Direction.Down, _menuLayout.RightPanel.Width, 80), "Class Info", _font);
             _centerPanelCursor.SetPosition(_menuLayout.ContentContainer.Center.X - 75, _menuLayout.ContentContainer.Bottom - _defaultSpacing);
             var rect = _centerPanelCursor.GetNextRect(Direction.Up, 150, 50);
             _characterName = new InputField(rect, _font);

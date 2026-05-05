@@ -168,6 +168,7 @@ namespace MyMonoGame.Helpers
         public double FootContainerHeight;
         public double LeftPanelWidth;
         public double RightPanelWidth;
+        public bool AddDefaultButton;
     }
 
 }

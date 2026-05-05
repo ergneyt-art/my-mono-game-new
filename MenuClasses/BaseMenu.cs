@@ -32,6 +32,21 @@ namespace MyMonoGame.MenuClasses
         protected const int _defaultButtonHeight = 50;
         protected InfoDialog _infoDialog;
 
+        public BaseMenu(string title, MenuLayoutConfig screenConfig, Rectangle frame, SpriteFont font, Texture2D pixel)
+        {
+            Title = title;
+            _menuLayout = new MenuLayout(frame, screenConfig);
+            _font = font;
+            _pixel = pixel;
+            _buttons = new List<Button<T>>();
+            _leftPanelButtons = new List<Button<T>>();
+            _centerPanelButtons = new List<Button<T>>();
+            _rightPanelButtons = new List<Button<T>>();
+            _leftPanelCursor = new PanelCursor(_menuLayout.LeftPanel);
+            _centerPanelCursor = new PanelCursor(_menuLayout.ContentContainer);
+            _rightPanelCursor = new PanelCursor(_menuLayout.RightPanel);
+        }
+
         public BaseMenu(string title, Rectangle frame, SpriteFont font, Texture2D pixel)
         {
             Title = title;

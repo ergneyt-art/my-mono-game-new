@@ -10,6 +10,16 @@ namespace MyMonoGame.Helpers
 {
     public static class TextHelper
     {
+        public static int GetTextWidth(string text, SpriteFont font)
+        {
+            return (int)font.MeasureString(text).X;
+        }
+
+        public static int GetTextHeight(string text, SpriteFont font)
+        {
+            return (int)font.MeasureString(text).Y;
+        }
+
         public static List<string> SplitText(string sourceText, SpriteFont font, int areaWidth)
         {
             var textSize = font.MeasureString(sourceText);

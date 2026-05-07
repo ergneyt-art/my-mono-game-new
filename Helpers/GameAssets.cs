@@ -11,7 +11,8 @@ namespace MyMonoGame.Helpers
 {
     public class GameAssets
     {
-        public Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>> Characters { get; private set; }
+        public Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>> CharactersFullTexture { get; private set; }
+        public Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>> CharactersPortraitTexture { get; private set; }
 
         public GameAssets(ContentManager manager) 
         {
@@ -20,11 +21,11 @@ namespace MyMonoGame.Helpers
 
         public Texture2D GetCharacterTexture(CharacterRace race, CharacterGender gender)
         {
-            if (Characters.ContainsKey(race))
+            if (CharactersFullTexture.ContainsKey(race))
             {
-                if (Characters[race].ContainsKey(gender))
+                if (CharactersFullTexture[race].ContainsKey(gender))
                 {
-                    return Characters[race][gender];
+                    return CharactersFullTexture[race][gender];
                 }
                 else
                 {
@@ -37,14 +38,34 @@ namespace MyMonoGame.Helpers
             }
         }
 
+        public Texture2D GetCharacterPortraitTexture(Character character)
+        {
+            if (character == null) return null;
+            if (CharactersPortraitTexture.ContainsKey(character.Race))
+            {
+                if (CharactersPortraitTexture[character.Race].ContainsKey(character.Gender))
+                {
+                    return CharactersPortraitTexture[character.Race][character.Gender];
+                }
+                else
+                {
+                    throw new ArgumentException($"Texture {character.Gender} for race {character.Race} is not found");
+                }
+            }
+            else
+            {
+                throw new ArgumentException($"Textures for {character.Race} is not found");
+            }
+        }
+
         public Texture2D GetCharacterTexture(Character character)
         {
             if (character == null) return null;
-            if (Characters.ContainsKey(character.Race))
+            if (CharactersFullTexture.ContainsKey(character.Race))
             {
-                if (Characters[character.Race].ContainsKey(character.Gender))
+                if (CharactersFullTexture[character.Race].ContainsKey(character.Gender))
                 {
-                    return Characters[character.Race][character.Gender];
+                    return CharactersFullTexture[character.Race][character.Gender];
                 }
                 else
                 {
@@ -66,12 +87,17 @@ namespace MyMonoGame.Helpers
         {
             var characteres = new Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>>();
             var races = Enum.GetValues(typeof(CharacterRace)).Cast<CharacterRace>().ToList();
-            Characters = new Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>>();
+            CharactersFullTexture = new Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>>();
+            CharactersPortraitTexture = new Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>>();
+
             foreach (var race in races)
             {
-                Characters[race] = new Dictionary<CharacterGender, Texture2D>();
-                Characters[race][CharacterGender.Male] = manager.Load<Texture2D>($"Characters/{race.ToString().ToLower()}-Male");
-                Characters[race][CharacterGender.Female] = manager.Load<Texture2D>($"Characters/{race.ToString().ToLower()}-Female");
+                CharactersFullTexture[race] = new Dictionary<CharacterGender, Texture2D>();
+                CharactersFullTexture[race][CharacterGender.Male] = manager.Load<Texture2D>($"Characters/{race.ToString().ToLower()}-male-full");
+                CharactersFullTexture[race][CharacterGender.Female] = manager.Load<Texture2D>($"Characters/{race.ToString().ToLower()}-female-full");
+                CharactersPortraitTexture[race] = new Dictionary<CharacterGender, Texture2D>();
+                CharactersPortraitTexture[race][CharacterGender.Male] = manager.Load<Texture2D>($"Characters/{race.ToString().ToLower()}-male-portrait");
+                CharactersPortraitTexture[race][CharacterGender.Female] = manager.Load<Texture2D>($"Characters/{race.ToString().ToLower()}-female-portrait");
             }
         }
     }

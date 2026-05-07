@@ -54,6 +54,11 @@ namespace MyMonoGame.MenuClasses
             _assets = assets;
         }
 
+        public List<Character> GetParty()
+        {
+            return _charSlots.Where(x => x.Character is not null).Select(x => x.Character).ToList();
+        }
+
         private void ManageButtons()
         {
             if (_charSlots.Any(x => x.Character is not null))

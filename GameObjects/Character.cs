@@ -13,6 +13,15 @@ namespace MyMonoGame.GameObjects
         public CharacterClass Class { get; set; }
         public CharacterGender Gender { get; set; }
 
+        public int Health { get; set; } = 0;
+        public int Speed { get; set; } = 0;
+        public int MaxHealth { get; set; } = 0;
+        public int Strength { get; set; } = 0;
+        public int Agility { get; set; } = 0;
+        public int Intelligence { get; set; } = 0;
+
+
+
         public Character()
         {
             Name = "New Character";
@@ -43,5 +52,7 @@ namespace MyMonoGame.GameObjects
         Male,
         Female
     };
+
+
 }
 

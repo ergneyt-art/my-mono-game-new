@@ -24,6 +24,7 @@ namespace MyMonoGame
         private SettingsMenu _settingsMenu;
         private AboutGameMenu _aboutMenu;
         private PartyMenuScreen _partyMenuScreen;
+        private ExploringScreen _exploringScreen;
         private CharacterEditorScreen _characterEditorScreen;
 
         private const int _defaultScreenWidth = 1280;
@@ -60,8 +61,10 @@ namespace MyMonoGame
             _aboutMenu = new AboutGameMenu("About game", GraphicsDevice.Viewport.Bounds, _font, _pixel);
             _partyMenuScreen = new PartyMenuScreen("Party menu", GraphicsDevice.Viewport.Bounds, _font, _pixel);
             _characterEditorScreen = new CharacterEditorScreen("Character menu", GraphicsDevice.Viewport.Bounds, _font, _pixel);
+            _exploringScreen = new ExploringScreen("Exploring", GraphicsDevice.Viewport.Bounds, _font, _pixel);
             _characterEditorScreen.SetCharacterTexture(Assets);
             _partyMenuScreen.SetCharacterTexture(Assets);
+            _exploringScreen.LoadContent(Assets);
             _currentScreen = _mainMenuScreen;
 
             // TODO: use this.Content to load your game content here
@@ -105,6 +108,10 @@ namespace MyMonoGame
                     break;
                 case ScreenAction.SaveCharacter:
                     _currentScreen = _partyMenuScreen;
+                    break;
+                case ScreenAction.StartGame:
+                    _exploringScreen.SetParty(_partyMenuScreen.GetParty());
+                    _currentScreen = _exploringScreen;
                     break;
                 case ScreenAction.ExitGame:
                     this.Exit();

@@ -68,14 +68,14 @@ namespace MyMonoGame.MenuClasses
             {
                 foreach (var button in _buttons)
                 {
-                    button.SetEnabled(false);
+                    button.DisallowInteraction();
                 }
             }
             else
             {
                 foreach (var button in _buttons)
                 {
-                    button.SetEnabled(true);
+                    button.AllowInteraction();
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace MyMonoGame.MenuClasses
             {
                 if (button.Bounds.Intersects(_menuLayout.RightPanel))
                 {
-                    button.HideElement();
+                    button.Hide();
                 }
             }
         }
@@ -103,7 +103,7 @@ namespace MyMonoGame.MenuClasses
             {
                 if (button.Bounds.Intersects(_menuLayout.LeftPanel))
                 {
-                    button.HideElement();
+                    button.Hide();
                 }
             }
         }
@@ -114,7 +114,7 @@ namespace MyMonoGame.MenuClasses
             {
                 if (button.Bounds.Intersects(_menuLayout.ContentContainer))
                 {
-                    button.HideElement();
+                    button.Hide();
                 }
             }
         }
@@ -123,7 +123,7 @@ namespace MyMonoGame.MenuClasses
         {
             foreach (var button in _buttons)
             {
-                button.HideElement();
+                button.Hide();
             }
         }
 
@@ -131,7 +131,7 @@ namespace MyMonoGame.MenuClasses
         {
             foreach (var button in _buttons)
             {
-                button.SetEnabled(false);
+                button.DisallowInteraction();
             }
         }
 

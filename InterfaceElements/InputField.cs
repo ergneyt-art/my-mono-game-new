@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MyMonoGame.InterfaceElements
 {
-    public class InputField : BaseInterfaceElement
+    public class InputField : BaseActiveElement
     {
         public string Text { get; set; }
         public bool IsActive { get; private set; }
@@ -78,8 +78,8 @@ namespace MyMonoGame.InterfaceElements
             {
                 spriteBatch.Draw(texture, Bounds, Color.Gray);
             }
-            Vector2 textPosition = RecalculateTextPosition(Text, _font);
-            spriteBatch.DrawString(_font, Text, textPosition, Color.Black);
+            Vector2 textPosition = RecalculateTextPosition(Text, Font);
+            spriteBatch.DrawString(Font, Text, textPosition, Color.Black);
         }
 
         private Vector2 RecalculateTextPosition(string text, SpriteFont font)

@@ -13,10 +13,23 @@ namespace MyMonoGame.Helpers
     {
         public Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>> CharactersFullTexture { get; private set; }
         public Dictionary<CharacterRace, Dictionary<CharacterGender, Texture2D>> CharactersPortraitTexture { get; private set; }
+        public Dictionary<CharacterStatus, Texture2D> StatusTextures { get; private set; }
 
         public GameAssets(ContentManager manager) 
         {
             LoadAssets(manager);
+        }
+
+        public Texture2D GetStatusTexture(CharacterStatus status)
+        {
+            if (StatusTextures.ContainsKey(status))
+            {
+                return StatusTextures[status];
+            }
+            else
+            {
+                throw new ArgumentException($"Texture for status {status} is not found");
+            }
         }
 
         public Texture2D GetCharacterTexture(CharacterRace race, CharacterGender gender)
@@ -81,6 +94,17 @@ namespace MyMonoGame.Helpers
         private void LoadAssets(ContentManager manager)
         {
             LoadCharacteres(manager);
+            LoadStatuses(manager);
+        }
+
+        private void LoadStatuses(ContentManager manager)
+        {
+            StatusTextures = new Dictionary<CharacterStatus, Texture2D>();
+            var statuses = Enum.GetValues(typeof(CharacterStatus)).Cast<CharacterStatus>().ToList();
+            foreach (var status in statuses)
+            {
+                StatusTextures[status] = manager.Load<Texture2D>($"Statuses/{status.ToString().ToLower()}");
+            }
         }
 
         private void LoadCharacteres(ContentManager manager)

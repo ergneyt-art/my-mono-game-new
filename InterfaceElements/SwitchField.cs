@@ -11,7 +11,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace MyMonoGame.InterfaceElements
 {
-    public class SwitchField<T> : BaseInterfaceElement where T : Enum
+    public class SwitchField<T> : BaseActiveElement where T : Enum
     {
         private string _label;
         public T Value { get; set; }
@@ -29,8 +29,8 @@ namespace MyMonoGame.InterfaceElements
             _valueBox = new Rectangle(Bounds.X, _labelBox.Bottom, bound.Width, bound.Height / 2);
             var nextButtonRect = new Rectangle(_valueBox.Right - _swichButtonWidth, _valueBox.Top, _swichButtonWidth, _valueBox.Height);
             var previousButtonRect = new Rectangle(_valueBox.Left, _valueBox.Top, _swichButtonWidth, _valueBox.Height);
-            _nextButton = new Button<SwitchFieldAction>(nextButtonRect, SwitchFieldAction.SwitchToNextValue, ">", _font);
-            _previousButton = new Button<SwitchFieldAction>(previousButtonRect, SwitchFieldAction.SwitchToPreviousValue, "<", font);
+            _nextButton = new Button<SwitchFieldAction>(nextButtonRect, SwitchFieldAction.SwitchToNextValue, ">", Font);
+            _previousButton = new Button<SwitchFieldAction>(previousButtonRect, SwitchFieldAction.SwitchToPreviousValue, "<", Font);
             _label = label;
             Value = initialValue;
         }
@@ -55,10 +55,10 @@ namespace MyMonoGame.InterfaceElements
         public void Draw(SpriteBatch spriteBatch, Texture2D texture)
         {
             if (!IsVisible) return;
-            Vector2 labelPosition = RecalculateTextPosition(_label, _labelBox);
-            Vector2 valuePosition = RecalculateTextPosition(Value.ToString(), _valueBox);
-            spriteBatch.DrawString(_font, _label, labelPosition, Color.White);
-            spriteBatch.DrawString(_font, Value.ToString(), valuePosition, Color.White);
+            Vector2 labelPosition = TextHelper.RecalculateTextPosition(_label, _labelBox, Font);
+            Vector2 valuePosition = TextHelper.RecalculateTextPosition(Value.ToString(), _valueBox, Font);
+            spriteBatch.DrawString(Font, _label, labelPosition, Color.White);
+            spriteBatch.DrawString(Font, Value.ToString(), valuePosition, Color.White);
             _nextButton.Draw(spriteBatch, texture);
             _previousButton.Draw(spriteBatch, texture);
         }

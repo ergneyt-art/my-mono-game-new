@@ -8,33 +8,21 @@ using System.Threading.Tasks;
 
 namespace MyMonoGame.InterfaceElements
 {
-    public class ToolTip
+    public class ToolTip : BaseElement
     {
-        public Rectangle Bounds { get; set; }
+        // public Rectangle Bounds { get; set; }
         public string Text { get; set; }
-        public bool IsShow { get; set; }
-        public ToolTip(string text)
+        public ToolTip(string text, SpriteFont font) : base(new Rectangle(0, 0, 0, 0), font)
         {
-            Bounds = new Rectangle(0, 0, 0, 0);
             Text = text;
         }
 
-        public void Show()
+        public override void Draw(SpriteBatch spriteBatch, Texture2D texture)
         {
-            IsShow = true;
-        }
-
-        public void Hide()
-        {
-            IsShow = false;
-        }
-
-        public void Draw(SpriteBatch spriteBatch, SpriteFont font, Texture2D texture)
-        {
-            if (IsShow)
+            if (IsVisible)
             {
                 spriteBatch.Draw(texture, Bounds, Color.Black * 0.7f);
-                spriteBatch.DrawString(font, Text, new Vector2(Bounds.X + 5, Bounds.Y + 5), Color.White);
+                spriteBatch.DrawString(Font, Text, new Vector2(Bounds.X + 5, Bounds.Y + 5), Color.White);
             }
         }
     }

@@ -16,7 +16,6 @@ namespace MyMonoGame.InterfaceElements
         public string Title { get; private set; }
         public bool IsOpen { get; private set; }
         public MenuLayout _layout { get; private set; }
-
         public TextBlock TitleArea { get; private set; }
         public TextBlock MessageArea { get; private set; }
         public SpriteFont Font { get; private set; }

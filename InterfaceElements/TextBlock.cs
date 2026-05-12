@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MyMonoGame.InterfaceElements
 {
-    public class TextBlock : BaseInterfaceElement
+    public class TextBlock : BaseElement
     {
         public string Text { get; set; } = string.Empty;
 
@@ -19,14 +19,14 @@ namespace MyMonoGame.InterfaceElements
             Text = text;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch, Texture2D pixel = null)
         {
-            var text = TextHelper.SplitText(Text, _font, Bounds.Width);
-            var textSize = _font.MeasureString(Text);
+            var text = TextHelper.SplitText(Text, Font, Bounds.Width);
+            var textSize = Font.MeasureString(Text);
             var counter = 0;
             foreach (var item in text) 
             {
-                spriteBatch.DrawString(_font, item, new Vector2(Bounds.X, Bounds.Y + (textSize.Y * counter)), Color.White);
+                spriteBatch.DrawString(Font, item, new Vector2(Bounds.X, Bounds.Y + (textSize.Y * counter)), Color.White);
                 counter++;
             }
         }

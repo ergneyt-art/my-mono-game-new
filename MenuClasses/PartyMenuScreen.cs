@@ -52,6 +52,10 @@ namespace MyMonoGame.MenuClasses
         public void SetCharacterTexture(GameAssets assets)
         {
             _assets = assets;
+            foreach (var slot in _charSlots) 
+            { 
+                slot.SetTextures(assets);
+            }
         }
 
         public List<Character> GetParty()
@@ -63,26 +67,26 @@ namespace MyMonoGame.MenuClasses
         {
             if (_charSlots.Any(x => x.Character is not null))
             {
-                _buttons.FirstOrDefault(x => x.Action == ScreenAction.StartGame).SetEnabled(true);
+                _buttons.FirstOrDefault(x => x.Action == ScreenAction.StartGame).AllowInteraction();
             }
             else
             {
-                _buttons.FirstOrDefault(x => x.Action == ScreenAction.StartGame).SetEnabled(false);
+                _buttons.FirstOrDefault(x => x.Action == ScreenAction.StartGame).DisallowInteraction();
             }
 
             foreach (var slot in _charSlots)
             {
                 if (slot.Character is null)
                 {
-                    slot.CreateButton.ShowElement();
-                    slot.ChangeButton.HideElement();
-                    slot.DeleteButton.HideElement();
+                    slot.CreateButton.Show();
+                    slot.ChangeButton.Hide();
+                    slot.DeleteButton.Hide();
                 }
                 else
                 {
-                    slot.CreateButton.HideElement();
-                    slot.ChangeButton.ShowElement();
-                    slot.DeleteButton.ShowElement();
+                    slot.CreateButton.Hide();
+                    slot.ChangeButton.Show();
+                    slot.DeleteButton.Show();
                 }
             }
         }
@@ -140,8 +144,8 @@ namespace MyMonoGame.MenuClasses
             }
             foreach(var slot in _charSlots)
             {
-                var charTexture = slot.Character is not null ? _assets.GetCharacterTexture(slot.Character) : null;
-                slot.Draw(spriteBatch, charTexture, _pixel);
+                // var charTexture = slot.Character is not null ? _assets.GetCharacterTexture(slot.Character) : null;
+                slot.Draw(spriteBatch, _pixel);
             }
         }
 

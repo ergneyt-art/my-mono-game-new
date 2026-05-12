@@ -12,12 +12,14 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace MyMonoGame.InterfaceElements
 {
-    public class CharacterSlotUI : BaseInterfaceElement
+    public class CharacterSlotUI : BaseElement
     {
         public Character? Character;
         public Rectangle CharInfoArea;
         public Rectangle CharImageArea;
         public Rectangle ButtonsArea;
+        public Texture2D CharTexture;
+        public GameAssets Assets;
         public Button<PartyMenuActions> CreateButton;
         public Button<PartyMenuActions> ChangeButton;
         public Button<PartyMenuActions> DeleteButton;
@@ -27,6 +29,7 @@ namespace MyMonoGame.InterfaceElements
 
         public CharacterSlotUI(Rectangle frame, SpriteFont font, int buttonWidth = _defaultButtonWidth, int buttonHeight = _defaultButtonHeight, int buttonSpacing = _defaultButtonSpacing) : base(frame, font)
         {
+            
             var infoAreaHeight = (int)(frame.Height * 0.3f);
             var imageAreaHeight = (int)(frame.Height * 0.5f);
             var buttonsAreaHeight = frame.Height - infoAreaHeight - imageAreaHeight;
@@ -35,11 +38,17 @@ namespace MyMonoGame.InterfaceElements
             CharImageArea = new Rectangle(frame.X, CharInfoArea.Bottom, frame.Width, imageAreaHeight);
             ButtonsArea = new Rectangle(frame.X, CharImageArea.Bottom, frame.Width, buttonsAreaHeight);
 
-            DeleteButton = new Button<PartyMenuActions>(new Rectangle(ButtonsArea.X, ButtonsArea.Y, ButtonsArea.Width, ButtonsArea.Height / 2), PartyMenuActions.DeleteCharacter, "Delete", _font);
-            CreateButton = new Button<PartyMenuActions>(new Rectangle(ButtonsArea.X, ButtonsArea.Y, ButtonsArea.Width, ButtonsArea.Height / 2), PartyMenuActions.AddCharacter, "Add", _font);
-            ChangeButton = new Button<PartyMenuActions>(new Rectangle(ButtonsArea.X, ButtonsArea.Y + (ButtonsArea.Height / 2), ButtonsArea.Width, ButtonsArea.Height / 2), PartyMenuActions.EditCharacter, "Edit", font);
+            DeleteButton = new Button<PartyMenuActions>(new Rectangle(ButtonsArea.X, ButtonsArea.Y, ButtonsArea.Width, ButtonsArea.Height / 2), PartyMenuActions.DeleteCharacter, "Delete", Font);
+            CreateButton = new Button<PartyMenuActions>(new Rectangle(ButtonsArea.X, ButtonsArea.Y, ButtonsArea.Width, ButtonsArea.Height / 2), PartyMenuActions.AddCharacter, "Add", Font);
+            ChangeButton = new Button<PartyMenuActions>(new Rectangle(ButtonsArea.X, ButtonsArea.Y + (ButtonsArea.Height / 2), ButtonsArea.Width, ButtonsArea.Height / 2), PartyMenuActions.EditCharacter, "Edit", Font);
             Character = null;
         }
+
+        public void SetTextures(GameAssets assets)
+        {
+            Assets = assets;
+        }
+
 
         public void Update()
         {
@@ -48,7 +57,7 @@ namespace MyMonoGame.InterfaceElements
             DeleteButton.Update();
         }
 
-        public void Draw(SpriteBatch spriteBatch, Texture2D charTexture, Texture2D pixel)
+        public override void Draw(SpriteBatch spriteBatch, Texture2D pixel)
         {
             // Draw slot background
             spriteBatch.Draw(pixel, Bounds, Color.Gray * 0.5f);
@@ -56,16 +65,16 @@ namespace MyMonoGame.InterfaceElements
             {
                 // Draw character info
                 Vector2 namePosition = new Vector2(CharInfoArea.X + 10, CharInfoArea.Y + 10);
-                spriteBatch.DrawString(_font, Character.Name, namePosition, Color.White);
+                spriteBatch.DrawString(Font, Character.Name, namePosition, Color.White);
                 Vector2 classPosition = new Vector2(CharInfoArea.X + 10, CharInfoArea.Y + 40);
-                spriteBatch.DrawString(_font, Character.Class.ToString(), classPosition, Color.White);
+                spriteBatch.DrawString(Font, Character.Class.ToString(), classPosition, Color.White);
                 Vector2 racePosition = new Vector2(CharInfoArea.X + 10, CharInfoArea.Y + 70);
-                spriteBatch.DrawString(_font, Character.Race.ToString(), racePosition, Color.White);
+                spriteBatch.DrawString(Font, Character.Race.ToString(), racePosition, Color.White);
                 Vector2 genderPosition = new Vector2(CharInfoArea.X + 10, CharInfoArea.Y + 100);
-                spriteBatch.DrawString(_font, Character.Gender.ToString(), genderPosition, Color.White);
+                spriteBatch.DrawString(Font, Character.Gender.ToString(), genderPosition, Color.White);
                 // Here you can draw more character info like level, class, etc.
                 // Draw character image (placeholder)
-                spriteBatch.Draw(charTexture, CharImageArea, Color.White);
+                spriteBatch.Draw(Assets.GetCharacterTexture(Character), CharImageArea, Color.White);
             }
             else
             {

@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MyMonoGame.Helpers;
 using MyMonoGame.MenuClasses;
 
 namespace MyMonoGame.InterfaceElements
 {
-    public class Button<T> : BaseInterfaceElement where T : Enum
+    public class Button<T> : BaseActiveElement where T : Enum
     {
         public T Action { get; set; }
         public string Text { get; private set; }
@@ -27,7 +28,7 @@ namespace MyMonoGame.InterfaceElements
         public Button(Rectangle bounds, T action, string text, SpriteFont font) : base(bounds, font)
         {
             Text = text;
-            _textPosition = RecalculateTextPosition(text);
+            _textPosition = TextHelper.RecalculateTextPosition(Text, Bounds, Font);
             Action = action;
         }
 
@@ -53,7 +54,7 @@ namespace MyMonoGame.InterfaceElements
             IsClicked = false;
         }
 
-        public void Draw(SpriteBatch spriteBatch, Texture2D pixel)
+        public override void Draw(SpriteBatch spriteBatch, Texture2D pixel)
         {
             if (IsVisible)
             {
@@ -67,11 +68,13 @@ namespace MyMonoGame.InterfaceElements
                     color = ButtonHoverdColor;
                 }
                 spriteBatch.Draw(pixel, Bounds, color);
-                spriteBatch.DrawString(_font, Text, _textPosition, TextColor);
+                spriteBatch.DrawString(Font, Text, _textPosition, TextColor);
+                /*
                 if (IsHovered && this.Tooltip != null && this.Tooltip.IsShow)
                 {
                     this.Tooltip.Draw(spriteBatch, _font, pixel);
                 }
+                */
             }
         }
     }

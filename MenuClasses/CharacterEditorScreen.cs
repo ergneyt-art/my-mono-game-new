@@ -102,6 +102,7 @@ namespace MyMonoGame.MenuClasses
                         CurrentCharacter.Race = _characterRace.Value;
                         CurrentCharacter.Gender = _characterGender.Value;
                         CurrentCharacter.Name = _characterName.Text;
+                        CurrentCharacter.SetStartingParams();
                     }
                     return button.Action;
                 }

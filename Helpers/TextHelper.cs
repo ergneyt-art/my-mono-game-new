@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,15 @@ namespace MyMonoGame.Helpers
         public static int GetTextHeight(string text, SpriteFont font)
         {
             return (int)font.MeasureString(text).Y;
+        }
+
+        public static Vector2 RecalculateTextPosition(string text, Rectangle area, SpriteFont font = null)
+        {
+            if (font == null) return new Vector2(area.X, area.Y);
+            var textSize = font.MeasureString(text);
+            float x = area.X + (area.Width - textSize.X) / 2;
+            float y = area.Y + (area.Height - textSize.Y) / 2;
+            return new Vector2(x, y);
         }
 
         public static List<string> SplitText(string sourceText, SpriteFont font, int areaWidth)

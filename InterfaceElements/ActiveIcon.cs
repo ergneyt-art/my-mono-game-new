@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MyMonoGame.InterfaceElements
 {
-    public class ActiveIcon : BaseInterfaceElement
+    public class ActiveIcon : BaseElementWithTooltip
     {
         public Texture2D Texture { get; private set; }
         public ActiveIcon(Rectangle bounds, SpriteFont font, string tooltipText = null) : base(bounds, font, tooltipText)
@@ -19,6 +19,18 @@ namespace MyMonoGame.InterfaceElements
         public void SetTexture(Texture2D texture)
         {
             this.Texture = texture;
+        }
+
+        public override void Draw(SpriteBatch spriteBatch, Texture2D pixel = null)
+        {
+            if (IsVisible)
+            {
+                if (Texture != null)
+                {
+                    spriteBatch.Draw(Texture, Bounds, Color.White);
+                }
+                base.Draw(spriteBatch);
+            }
         }
     }
 }

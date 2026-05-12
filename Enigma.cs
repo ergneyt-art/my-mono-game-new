@@ -61,10 +61,10 @@ namespace MyMonoGame
             _aboutMenu = new AboutGameMenu("About game", GraphicsDevice.Viewport.Bounds, _font, _pixel);
             _partyMenuScreen = new PartyMenuScreen("Party menu", GraphicsDevice.Viewport.Bounds, _font, _pixel);
             _characterEditorScreen = new CharacterEditorScreen("Character menu", GraphicsDevice.Viewport.Bounds, _font, _pixel);
-            _exploringScreen = new ExploringScreen("Exploring", GraphicsDevice.Viewport.Bounds, _font, _pixel);
+            _exploringScreen = new ExploringScreen("Exploring", GraphicsDevice.Viewport.Bounds, _font, _pixel, Assets);
             _characterEditorScreen.SetCharacterTexture(Assets);
             _partyMenuScreen.SetCharacterTexture(Assets);
-            _exploringScreen.LoadContent(Assets);
+            // _exploringScreen.LoadContent(Assets);
             _currentScreen = _mainMenuScreen;
 
             // TODO: use this.Content to load your game content here

@@ -10,47 +10,107 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace MyMonoGame.InterfaceElements
 {
-    public abstract class BaseInterfaceElement
+    public abstract class BaseElement : IInterfaceElement
+    {
+        public Rectangle Bounds { get; set; }
+        protected SpriteFont Font;
+        protected bool IsVisible = true;
+
+        protected BaseElement(Rectangle bounds, SpriteFont font) 
+        { 
+            this.Bounds = bounds;
+            this.Font = font;
+        }
+
+        public virtual void Hide()
+        {
+            IsVisible = false;
+        }
+
+        public virtual void Show() 
+        {
+            IsVisible = true;
+        }
+
+        public abstract void Draw(SpriteBatch spriteBatch, Texture2D pixel);
+    }
+
+    public abstract class BaseActiveElement : BaseElement
+    {
+        protected bool IsEnabled = true;
+        protected bool IsHovered = false;
+
+        protected BaseActiveElement(Rectangle bounds, SpriteFont font) : base(bounds, font) 
+        { 
+
+        }
+
+        protected virtual void UpdateHoveredState()
+        {
+            if (IsVisible && IsEnabled)
+            {
+                var mouse = Mouse.GetState();
+                IsHovered = Bounds.Contains(mouse.Position);
+            }
+            else
+            {
+                IsHovered = false;
+            }
+        }
+
+        public override void Draw(SpriteBatch spriteBatch, Texture2D pixel = null)
+        {
+            // Base drawing logic can be implemented here, or in derived classes
+        }
+
+        public void AllowInteraction()
+        {
+            IsEnabled = true;
+        }
+
+        public void DisallowInteraction()
+        {
+            IsEnabled = false;
+        }
+
+        public void ToggleInteraction()
+        {
+            IsEnabled = !IsEnabled;
+        }
+
+        public override void Hide()
+        {
+            base.Hide();
+            IsEnabled = false;
+        }
+
+        public override void Show() 
+        {
+            base.Show();
+            IsEnabled = true;
+        }
+    }
+
+    public abstract class BaseElementWithTooltip : BaseActiveElement
     {
         public string? TooltipText;
         protected ToolTip Tooltip;
-        protected SpriteFont _font;
-        protected bool IsVisible = true;
-        protected bool IsEnabled = true;
-        protected bool IsHovered = false;
-        public Rectangle Bounds { get; set; }
-
-        public BaseInterfaceElement(Rectangle bounds, SpriteFont font, string? tooltipText = null)
+        protected BaseElementWithTooltip(Rectangle bounds, SpriteFont font, string? tooltipText = null) : base(bounds, font)
         {
-            this.Bounds = bounds;
-            this._font = font;
             this.TooltipText = tooltipText;
-            this.Tooltip = new ToolTip(tooltipText ?? string.Empty);
+            this.Tooltip = new ToolTip(tooltipText ?? string.Empty, font);
         }
 
-        protected Vector2 RecalculateTextPosition(string text, Rectangle frame)
+        public override void Draw(SpriteBatch spriteBatch, Texture2D pixel = null)
         {
-            Vector2 size = _font.MeasureString(text);
-            float x_axis = frame.X + frame.Width / 2 - size.X / 2;
-            float y_axis = frame.Y + frame.Height / 2 - size.Y / 2;
-            return new Vector2(x_axis, y_axis);
+            base.Draw(spriteBatch, pixel);
+            if (IsHovered && !string.IsNullOrEmpty(TooltipText))
+            {
+                this.Tooltip.Draw(spriteBatch, pixel);
+            }
         }
 
-        protected Vector2 RecalculateTextPosition(string text)
-        {
-            Vector2 size = _font.MeasureString(text);
-            float x_axis = this.Bounds.X + Bounds.Width / 2 - size.X / 2;
-            float y_axis = this.Bounds.Y + Bounds.Height / 2 - size.Y / 2;
-            return new Vector2(x_axis, y_axis);
-        }
-
-        public void HideElement()
-        {
-            this.IsVisible = false;
-            this.IsEnabled = false;
-        }
-
-        protected void UpdateHoveredState()
+        protected override void UpdateHoveredState()
         {
             if (this.IsVisible && this.IsEnabled)
             {
@@ -69,9 +129,9 @@ namespace MyMonoGame.InterfaceElements
 
         protected void UpdateTooltip()
         {
-            if (this.IsHovered && !string.IsNullOrEmpty(this.TooltipText))
+            if (this.IsVisible && !string.IsNullOrEmpty(this.TooltipText))
             {
-                this.Tooltip = new ToolTip(this.TooltipText);
+                this.Tooltip = new ToolTip(this.TooltipText, Font);
                 TryToFindPlaceForToolTip();
                 Tooltip.Show();
             }
@@ -84,8 +144,8 @@ namespace MyMonoGame.InterfaceElements
         protected void TryToFindPlaceForToolTip()
         {
             var mouse = Mouse.GetState();
-            var tooltipSize = _font.MeasureString(this.TooltipText);
-            var screenBounds = new Rectangle(0, 0, 1280, 800);
+            var tooltipSize = Font.MeasureString(this.TooltipText);
+            var screenBounds = new Rectangle(0, 0, 1280, 800); // TODO: Get actual screen size
             var tooltipBounds = new Rectangle(mouse.X, mouse.Y, (int)tooltipSize.X + 10, (int)tooltipSize.Y + 10);
             if (!screenBounds.Contains(tooltipBounds))
             {
@@ -99,28 +159,6 @@ namespace MyMonoGame.InterfaceElements
                 }
             }
             Tooltip.Bounds = tooltipBounds;
-        }
-
-        protected void ToggleVisibility()
-        {
-            this.IsVisible = !this.IsVisible;
-            this.IsEnabled = this.IsVisible;
-        }
-
-        public void ShowElement()
-        {
-            this.IsVisible = true;
-            this.IsEnabled = true;
-        }
-
-        public void SetVisible(bool visible)
-        {
-            this.IsVisible = visible;
-        }
-
-        public void SetEnabled(bool enabled)
-        {
-            this.IsEnabled = enabled;
         }
     }
 }

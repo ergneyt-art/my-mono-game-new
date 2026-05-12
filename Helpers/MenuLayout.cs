@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MyMonoGame.InterfaceElements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -157,6 +158,27 @@ namespace MyMonoGame.Helpers
             var rect = new Rectangle(x, y, width, height);
             ContentContainerCurrentY += (spacing + height);
             return rect;
+        }
+
+        public ActiveIcon[,] GetGrids(Rectangle area, SpriteFont font) 
+        {
+            var gridHeight = area.Height / 20;
+            var gridWidth = area.Width / 20;
+            var field = new ActiveIcon[20, 20];
+            for (int i = 0; i < 20; i++) 
+            {
+                for (int j = 0; j < 20; j++)
+                {
+                    field[i, j] = new ActiveIcon(new Rectangle(
+                        this.ContentContainer.Left + j * gridWidth,
+                        this.ContentContainer.Top + i * gridHeight,
+                        gridWidth,
+                        gridHeight),
+                        font
+                    );
+                }
+            }
+            return field;
         }
     }
 

@@ -16,6 +16,11 @@ namespace MyMonoGame.InterfaceElements
 
         }
 
+        public void Update()
+        {
+             UpdateHoveredState();
+        }
+
         public void SetTexture(Texture2D texture)
         {
             this.Texture = texture;
@@ -28,6 +33,17 @@ namespace MyMonoGame.InterfaceElements
                 if (Texture != null)
                 {
                     spriteBatch.Draw(Texture, Bounds, Color.White);
+                }
+                else 
+                {
+                    if (IsHovered)
+                    {
+                        spriteBatch.Draw(pixel, Bounds, Color.LightBlue);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(pixel, Bounds, Color.White);
+                    }
                 }
                 base.Draw(spriteBatch);
             }

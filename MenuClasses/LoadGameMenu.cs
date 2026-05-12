@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MyMonoGame.Helpers;
+using MyMonoGame.InterfaceElements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,18 +10,26 @@ using System.Threading.Tasks;
 
 namespace MyMonoGame.MenuClasses
 {
+    
     public class LoadGameMenu : BaseMenu<ScreenAction>
     {
+        protected ActiveIcon[,] TestGrid;
         public LoadGameMenu(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : base(title, frame, font, pixel)
         {
             _leftPanelCursor.SetPosition(_menuLayout.LeftPanel.Center.X - _defaultButtonWidth / 2, _menuLayout.LeftPanel.Top + _defaultSpacing);
             _leftPanelButtons.Add(AddButton("Back", ScreenAction.GoToMainMenu, _leftPanelCursor));
+            TestGrid = _menuLayout.GetGrids(_menuLayout.ContentContainer, _font);
             // _leftPanelButtons[0].TooltipText = "test tip";
         }
 
         public override ScreenAction Update()
         {
             ButtonsEnabledManage();
+            foreach (var grid in TestGrid)
+            {
+                grid.Update();
+            }
+
             foreach (var button in _buttons)
             {
                 button.Update();
@@ -35,6 +44,14 @@ namespace MyMonoGame.MenuClasses
             foreach (var button in _buttons)
             {
                 button.Draw(spriteBatch, _pixel);
+            }
+
+            if (TestGrid != null)
+            {
+                foreach (var grid in TestGrid)
+                {
+                    grid.Draw(spriteBatch, _pixel);
+                }
             }
         }
     }

@@ -15,7 +15,7 @@ namespace MyMonoGame.InterfaceElements
         public int Value { get; set; }
         public Color Color { get; set; }
 
-        public ValueBar(Rectangle bounds, SpriteFont font) : base(bounds, font)
+        public ValueBar(Rectangle bounds, GameContext context) : base(bounds, context)
         {
 
         }
@@ -33,17 +33,17 @@ namespace MyMonoGame.InterfaceElements
         }
         */
 
-        public override void Draw(SpriteBatch spriteBatch, Texture2D pixel)
+        public override void Draw()
         {
             // Draw the background of the bar
-            spriteBatch.Draw(pixel, Bounds, Color.Gray);
+            Context.SpriteBatch.Draw(Context.Pixel, Bounds, Color.Gray);
             // Calculate the width of the filled portion of the bar
             float fillPercentage = (float)CurrentValue / Value;
             int fillWidth = (int)(Bounds.Width * fillPercentage);
             // Draw the filled portion of the bar
-            spriteBatch.Draw(pixel, new Rectangle(Bounds.Left, Bounds.Top, fillWidth, Bounds.Height), Color);
+            Context.SpriteBatch.Draw(Context.Pixel, new Rectangle(Bounds.Left, Bounds.Top, fillWidth, Bounds.Height), Color);
             var text = $"{CurrentValue}/{Value}";
-            spriteBatch.DrawString(Font, text, new Vector2(Bounds.Center.X - TextHelper.GetTextWidth(text, Font) / 2, Bounds.Center.Y - Font.LineSpacing / 2), Color.White);
+            Context.SpriteBatch.DrawString(Context.Font, text, new Vector2(Bounds.Center.X - TextHelper.GetTextWidth(text, Context.Font) / 2, Bounds.Center.Y - Context.Font.LineSpacing / 2), Color.White);
         }
     }
 }

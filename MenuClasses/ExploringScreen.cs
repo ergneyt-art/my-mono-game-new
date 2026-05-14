@@ -17,25 +17,21 @@ namespace MyMonoGame.MenuClasses
         // private List<Character> _party;
         private List<CharacterStatusWindow> _characterStatusWindows;
         private Dictionary<Character, CharacterStatusWindow> partyMapping;
-
-        private GameAssets _assets;
-
         private int _defaultCharPosterHeight = 200;
 
 
 
-        public ExploringScreen(string title, Rectangle frame, SpriteFont font, Texture2D pixel, GameAssets assets) : base(title, frame, font, pixel)
+        public ExploringScreen(string title, Rectangle frame, GameContext context) : base(title, frame, context)
         {
             _leftPanelCursor.SetPosition(_menuLayout.LeftPanel.Center.X - _defaultButtonWidth / 2, _menuLayout.LeftPanel.Top + _defaultSpacing);
             _leftPanelButtons.Add(AddButton("Back", ScreenAction.GoToMainMenu, _leftPanelCursor));
-            _assets = assets;
             var charsPorterWidth = ((_menuLayout.ContentContainer.Right - 10) - (_menuLayout.ContentContainer.Left + 10)) / 4;
             var charPoserTop = _menuLayout.ContentContainer.Bottom - _defaultCharPosterHeight;
             _characterStatusWindows = new List<CharacterStatusWindow>();
             for (int i = 0; i < 4; i++)
             {
                 var left = _characterStatusWindows.Count == 0 ? _menuLayout.ContentContainer.Left + 5 : _characterStatusWindows.Last().Bounds.Right + 5;
-                var charStatusWindow = new CharacterStatusWindow(new Rectangle(left, charPoserTop, charsPorterWidth, _defaultCharPosterHeight), _font, _assets);
+                var charStatusWindow = new CharacterStatusWindow(new Rectangle(left, charPoserTop, charsPorterWidth, _defaultCharPosterHeight), Context);
                 _characterStatusWindows.Add(charStatusWindow);
             }
         }
@@ -43,6 +39,7 @@ namespace MyMonoGame.MenuClasses
 
         public void SetParty(List<Character> party)
         {
+            if (party == null) { throw new ArgumentNullException(nameof(party)); }
             partyMapping = new Dictionary<Character, CharacterStatusWindow>();
             for (int i = 0;i < party.Count;i++)
             {
@@ -62,22 +59,22 @@ namespace MyMonoGame.MenuClasses
             {
                 button.Update();
 
-                if (button.IsClicked) return button.Action;
+                if (button.GetClickedStatus()) return button.Action;
             }
             return ScreenAction.None;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw()
         {
-            SetTitle(spriteBatch);
+            SetTitle(Context.SpriteBatch);
             foreach (var button in _buttons)
             {
-                button.Draw(spriteBatch, _pixel);
+                button.Draw();
             }
 
             foreach (var item in partyMapping)
             {
-                item.Value.Draw(spriteBatch, _pixel);
+                item.Value.Draw();
             }
         }
     }

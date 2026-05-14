@@ -23,14 +23,14 @@ namespace MyMonoGame.InterfaceElements
 
         private Rectangle _labelBox;
         private Rectangle _valueBox;
-        public SwitchField(Rectangle bound, string label, T initialValue, SpriteFont font) : base(bound, font)
+        public SwitchField(Rectangle bound, string label, T initialValue, GameContext context) : base(bound, context)
         {
             _labelBox = new Rectangle(Bounds.X, Bounds.Y, bound.Width, bound.Height / 2);
             _valueBox = new Rectangle(Bounds.X, _labelBox.Bottom, bound.Width, bound.Height / 2);
             var nextButtonRect = new Rectangle(_valueBox.Right - _swichButtonWidth, _valueBox.Top, _swichButtonWidth, _valueBox.Height);
             var previousButtonRect = new Rectangle(_valueBox.Left, _valueBox.Top, _swichButtonWidth, _valueBox.Height);
-            _nextButton = new Button<SwitchFieldAction>(nextButtonRect, SwitchFieldAction.SwitchToNextValue, ">", Font);
-            _previousButton = new Button<SwitchFieldAction>(previousButtonRect, SwitchFieldAction.SwitchToPreviousValue, "<", Font);
+            _nextButton = new Button<SwitchFieldAction>(nextButtonRect, SwitchFieldAction.SwitchToNextValue, ">", Context);
+            _previousButton = new Button<SwitchFieldAction>(previousButtonRect, SwitchFieldAction.SwitchToPreviousValue, "<", Context);
             _label = label;
             Value = initialValue;
         }
@@ -41,26 +41,26 @@ namespace MyMonoGame.InterfaceElements
             {
                 _nextButton.Update();
                 _previousButton.Update();
-                if (_nextButton.IsClicked)
+                if (_nextButton.GetClickedStatus())
                 {
                     SwitchToNextValue();
                 }
-                else if (_previousButton.IsClicked)
+                else if (_previousButton.GetClickedStatus())
                 {
                     SwitchToPreviousValue();
                 }
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, Texture2D texture)
+        public override void Draw()
         {
             if (!IsVisible) return;
-            Vector2 labelPosition = TextHelper.RecalculateTextPosition(_label, _labelBox, Font);
-            Vector2 valuePosition = TextHelper.RecalculateTextPosition(Value.ToString(), _valueBox, Font);
-            spriteBatch.DrawString(Font, _label, labelPosition, Color.White);
-            spriteBatch.DrawString(Font, Value.ToString(), valuePosition, Color.White);
-            _nextButton.Draw(spriteBatch, texture);
-            _previousButton.Draw(spriteBatch, texture);
+            Vector2 labelPosition = TextHelper.RecalculateTextPosition(_label, _labelBox, Context.Font);
+            Vector2 valuePosition = TextHelper.RecalculateTextPosition(Value.ToString(), _valueBox, Context.Font);
+            Context.SpriteBatch.DrawString(Context.Font, _label, labelPosition, Color.White);
+            Context.SpriteBatch.DrawString(Context.Font, Value.ToString(), valuePosition, Color.White);
+            _nextButton.Draw();
+            _previousButton.Draw();
         }
 
         private void SwitchToNextValue()

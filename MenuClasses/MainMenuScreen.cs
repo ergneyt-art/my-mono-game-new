@@ -14,8 +14,7 @@ namespace MyMonoGame.MenuClasses
 {
     public class MainMenuScreen : BaseMenu<ScreenAction>
     {
-        public MainMenuScreen(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : 
-            base(title, frame, font, pixel)
+        public MainMenuScreen(string title, Rectangle frame, GameContext context) : base(title, frame, context)
         {
             AddButtonToCenterPanel("Start Game", ScreenAction.GoToPartyMenu);
             AddButtonToCenterPanel("Load Game", ScreenAction.GoToLoadGameMenu);
@@ -52,33 +51,27 @@ namespace MyMonoGame.MenuClasses
             foreach (var button in _buttons) 
             {
                 button.Update();
-                if (button.IsClicked && button.Action == ScreenAction.Test) 
+                if (button.GetClickedStatus())
                 {
-                    _infoDialog = new InfoDialog(_menuLayout.ContentContainer, "Test", _font, "This is a test dialog. Random text here and here and here too. There is a enormous bunch of useless text. Yes!");
-                    TurnOffAllButtons();
-                    _infoDialog.Open();
-                    return ScreenAction.None;
-                }
-                if (button.IsClicked) 
-                { 
-                    return button.Action; 
+                    if (button.Action == ScreenAction.Test)
+                    {
+                        _infoDialog = new InfoDialog(_menuLayout.ContentContainer, "Test", Context, "This is a test dialog. Random text here and here and here too. There is a enormous bunch of useless text. Yes!");
+                        TurnOffAllButtons();
+                        _infoDialog.Open();
+                        return ScreenAction.None;
+                    }
+                    else
+                    {
+                        return button.Action;
+                    }
                 }
             }
             return ScreenAction.None;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw()
         {
-            SetTitle(spriteBatch);
-            foreach (var button in _buttons)
-            {
-                button.Draw(spriteBatch, _pixel);
-            }
-
-            if (_infoDialog != null)
-            {
-                _infoDialog.Draw(spriteBatch, _font, _pixel);
-            }
+            base.Draw();
         }
     }
 }

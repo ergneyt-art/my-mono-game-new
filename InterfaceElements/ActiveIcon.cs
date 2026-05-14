@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MyMonoGame.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace MyMonoGame.InterfaceElements
     public class ActiveIcon : BaseElementWithTooltip
     {
         public Texture2D Texture { get; private set; }
-        public ActiveIcon(Rectangle bounds, SpriteFont font, string tooltipText = null) : base(bounds, font, tooltipText)
+        public ActiveIcon(Rectangle bounds, GameContext context, string tooltipText = null) : base(bounds, context, tooltipText)
         {
 
         }
@@ -26,26 +27,26 @@ namespace MyMonoGame.InterfaceElements
             this.Texture = texture;
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Texture2D pixel = null)
+        public override void Draw()
         {
             if (IsVisible)
             {
+                base.Draw();
                 if (Texture != null)
                 {
-                    spriteBatch.Draw(Texture, Bounds, Color.White);
+                    Context.SpriteBatch.Draw(Texture, Bounds, Color.White);
                 }
                 else 
                 {
                     if (IsHovered)
                     {
-                        spriteBatch.Draw(pixel, Bounds, Color.LightBlue);
+                        Context.SpriteBatch.Draw(Context.Pixel, Bounds, Color.LightBlue);
                     }
                     else
                     {
-                        spriteBatch.Draw(pixel, Bounds, Color.White);
+                        Context.SpriteBatch.Draw(Context.Pixel, Bounds, Color.White);
                     }
                 }
-                base.Draw(spriteBatch);
             }
         }
     }

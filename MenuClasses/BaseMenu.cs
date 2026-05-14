@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MyMonoGame.Helpers;
 using MyMonoGame.InterfaceElements;
 using System;
@@ -24,20 +25,18 @@ namespace MyMonoGame.MenuClasses
         protected PanelCursor _rightPanelCursor;
         protected PanelCursor _centerPanelCursor;
 
-        protected SpriteFont _font;
-        protected Texture2D _pixel;
+        protected GameContext Context { get; set; }
         protected MenuLayout _menuLayout;
         protected const int _defaultSpacing = 10;
         protected const int _defaultButtonWidth = 100;
         protected const int _defaultButtonHeight = 50;
         protected InfoDialog _infoDialog;
 
-        public BaseMenu(string title, MenuLayoutConfig screenConfig, Rectangle frame, SpriteFont font, Texture2D pixel)
+        public BaseMenu(string title, MenuLayoutConfig screenConfig, Rectangle frame, GameContext context)
         {
             Title = title;
             _menuLayout = new MenuLayout(frame, screenConfig);
-            _font = font;
-            _pixel = pixel;
+            Context = context;
             _buttons = new List<Button<T>>();
             _leftPanelButtons = new List<Button<T>>();
             _centerPanelButtons = new List<Button<T>>();
@@ -47,12 +46,11 @@ namespace MyMonoGame.MenuClasses
             _rightPanelCursor = new PanelCursor(_menuLayout.RightPanel);
         }
 
-        public BaseMenu(string title, Rectangle frame, SpriteFont font, Texture2D pixel)
+        public BaseMenu(string title, Rectangle frame, GameContext context)
         {
             Title = title;
             _menuLayout = new MenuLayout(frame);
-            _font = font;
-            _pixel = pixel;
+            Context = context;
             _buttons = new List<Button<T>>();
             _leftPanelButtons = new List<Button<T>>();
             _centerPanelButtons = new List<Button<T>>();
@@ -82,7 +80,18 @@ namespace MyMonoGame.MenuClasses
 
         abstract public ScreenAction Update();
 
-        abstract public void Draw(SpriteBatch spriteBatch);
+        virtual public void Draw()
+        {
+            SetTitle(Context.SpriteBatch);
+            foreach (var button in _buttons)
+            {
+                button.Draw();
+            }
+            if (_infoDialog != null)
+            {
+                _infoDialog.Draw();
+            }
+        }
 
         #region Button management methods
 
@@ -138,7 +147,7 @@ namespace MyMonoGame.MenuClasses
         protected Button<T> AddButton(string text, T action, PanelCursor panelCursor, Direction direction = Direction.Down, int width = _defaultButtonWidth, int height = _defaultButtonHeight, int spacing = _defaultSpacing)
         {
             var rect = panelCursor.GetNextRect(direction, width, height, spacing);
-            var button = new Button<T>(rect, action, text, _font);
+            var button = new Button<T>(rect, action, text, Context);
             _buttons.Add(button);
             return button;
         }
@@ -147,7 +156,7 @@ namespace MyMonoGame.MenuClasses
         {
             UpdateCursorPosition(_leftPanelButtons, _leftPanelCursor, _menuLayout.LeftPanel, direction, width, height, spacing);
             var rect = _leftPanelCursor.GetNextRect(direction, width, height, spacing);
-            var button = new Button<T>(rect, action, label, _font);
+            var button = new Button<T>(rect, action, label, Context);
             _leftPanelButtons.Add(button);
             _buttons.Add(button);
         }
@@ -156,7 +165,7 @@ namespace MyMonoGame.MenuClasses
         {
             UpdateCursorPosition(_rightPanelButtons, _rightPanelCursor, _menuLayout.RightPanel, direction, width, height, spacing);
             var rect = _rightPanelCursor.GetNextRect(direction, width, height, spacing);
-            var button = new Button<T>(rect, action, label, _font);
+            var button = new Button<T>(rect, action, label, Context);
             _rightPanelButtons.Add(button);
             _buttons.Add(button);
         }
@@ -165,7 +174,7 @@ namespace MyMonoGame.MenuClasses
         {
             UpdateCursorPosition(_centerPanelButtons, _centerPanelCursor, _menuLayout.ContentContainer, direction, width, height, spacing);
             var rect = _centerPanelCursor.GetNextRect(direction, width, height, spacing);
-            var button = new Button<T>(rect, action, label, _font);
+            var button = new Button<T>(rect, action, label, Context);
             _centerPanelButtons.Add(button);
             _buttons.Add(button);
         }
@@ -202,11 +211,11 @@ namespace MyMonoGame.MenuClasses
 
         protected void SetTitle(SpriteBatch spriteBatch, int spacing = _defaultSpacing)
         {
-            Vector2 size = _font.MeasureString(Title);
+            Vector2 size = Context.Font.MeasureString(Title);
             float x_axis = _menuLayout.HeaderContainer.Center.X - size.X / 2;
             float y_axis = size.Y + spacing;
             var position = new Vector2(x_axis, y_axis);
-            spriteBatch.DrawString(_font, Title, position, Color.White);
+            spriteBatch.DrawString(Context.Font, Title, position, Color.White);
         }
     }
 }

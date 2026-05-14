@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MyMonoGame.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,16 +11,16 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace MyMonoGame.InterfaceElements
 {
-    public abstract class BaseElement : IInterfaceElement
+    public abstract class BaseElement
     {
         public Rectangle Bounds { get; set; }
-        protected SpriteFont Font;
         protected bool IsVisible = true;
+        protected GameContext Context;
 
-        protected BaseElement(Rectangle bounds, SpriteFont font) 
+        protected BaseElement(Rectangle bounds, GameContext context) 
         { 
             this.Bounds = bounds;
-            this.Font = font;
+            this.Context = context;
         }
 
         public virtual void Hide()
@@ -32,7 +33,7 @@ namespace MyMonoGame.InterfaceElements
             IsVisible = true;
         }
 
-        public abstract void Draw(SpriteBatch spriteBatch, Texture2D pixel);
+        public abstract void Draw();
     }
 
     public abstract class BaseActiveElement : BaseElement
@@ -40,7 +41,7 @@ namespace MyMonoGame.InterfaceElements
         protected bool IsEnabled = true;
         protected bool IsHovered = false;
 
-        protected BaseActiveElement(Rectangle bounds, SpriteFont font) : base(bounds, font) 
+        protected BaseActiveElement(Rectangle bounds, GameContext context) : base(bounds, context) 
         { 
 
         }
@@ -58,7 +59,7 @@ namespace MyMonoGame.InterfaceElements
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Texture2D pixel = null)
+        public override void Draw()
         {
             // Base drawing logic can be implemented here, or in derived classes
         }
@@ -95,18 +96,18 @@ namespace MyMonoGame.InterfaceElements
     {
         public string? TooltipText;
         protected ToolTip Tooltip;
-        protected BaseElementWithTooltip(Rectangle bounds, SpriteFont font, string? tooltipText = null) : base(bounds, font)
+        protected BaseElementWithTooltip(Rectangle bounds, GameContext context, string? tooltipText = null) : base(bounds, context)
         {
             this.TooltipText = tooltipText;
-            this.Tooltip = new ToolTip(tooltipText ?? string.Empty, font);
+            this.Tooltip = new ToolTip(tooltipText ?? string.Empty, Context);
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Texture2D pixel = null)
+        public override void Draw()
         {
-            base.Draw(spriteBatch, pixel);
+            base.Draw();
             if (IsHovered && !string.IsNullOrEmpty(TooltipText))
             {
-                this.Tooltip.Draw(spriteBatch, pixel);
+                this.Tooltip.Draw();
             }
         }
 
@@ -116,10 +117,7 @@ namespace MyMonoGame.InterfaceElements
             {
                 var mouse = Mouse.GetState();
                 this.IsHovered = Bounds.Contains(mouse.Position);
-                if (this.IsHovered && !string.IsNullOrEmpty(this.TooltipText))
-                {
-                    UpdateTooltip();
-                }
+                UpdateTooltip();
             }
             else
             {
@@ -129,22 +127,29 @@ namespace MyMonoGame.InterfaceElements
 
         protected void UpdateTooltip()
         {
-            if (this.IsVisible && !string.IsNullOrEmpty(this.TooltipText))
+            if (!string.IsNullOrEmpty(this.TooltipText))
             {
-                this.Tooltip = new ToolTip(this.TooltipText, Font);
-                TryToFindPlaceForToolTip();
-                Tooltip.Show();
-            }
-            else
-            {
-                Tooltip.Hide();
+                if (Tooltip == null)
+                {
+                    Tooltip = new ToolTip(this.TooltipText, Context);
+                    TryToFindPlaceForToolTip();
+                }
+
+                if (IsHovered)
+                {
+                    Tooltip.Show();
+                }
+                else
+                {
+                    Tooltip.Hide();
+                }    
             }
         }
 
         protected void TryToFindPlaceForToolTip()
         {
             var mouse = Mouse.GetState();
-            var tooltipSize = Font.MeasureString(this.TooltipText);
+            var tooltipSize = Context.Font.MeasureString(this.TooltipText);
             var screenBounds = new Rectangle(0, 0, 1280, 800); // TODO: Get actual screen size
             var tooltipBounds = new Rectangle(mouse.X, mouse.Y, (int)tooltipSize.X + 10, (int)tooltipSize.Y + 10);
             if (!screenBounds.Contains(tooltipBounds))

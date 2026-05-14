@@ -16,14 +16,14 @@ namespace MyMonoGame.MenuClasses
 {
     public class PartyMenuScreen : BaseMenu<ScreenAction>
     {
-        private List<CharacterSlotUI> _charSlots;
-        public Character CurrentChar { get; private set; }
+        private List<CharacterSlotUI> CharSlots;
+        private int _selectedSlotIndex = -1;
+        // public Character CurrentChar { get; private set; }
         private GameAssets _assets;
 
-        public PartyMenuScreen(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : 
-            base(title, frame, font, pixel)
+        public PartyMenuScreen(string title, Rectangle frame, GameContext context) : base(title, frame, context)
         {
-            _charSlots = new List<CharacterSlotUI>();
+            CharSlots = new List<CharacterSlotUI>();
             _leftPanelCursor.SetPosition(_menuLayout.LeftPanel.Center.X - _defaultButtonWidth / 2, _menuLayout.LeftPanel.Top + _defaultSpacing);
             _leftPanelButtons.Add(AddButton("Back", ScreenAction.GoToMainMenu, _leftPanelCursor));
             _rightPanelCursor.SetPosition(_menuLayout.RightPanel.Center.X - _defaultButtonWidth / 2, _menuLayout.RightPanel.Top + _defaultSpacing);
@@ -39,33 +39,24 @@ namespace MyMonoGame.MenuClasses
                 }
                 else
                 {
-                    var previousSlot = _charSlots[i - 1];
+                    var previousSlot = CharSlots[i - 1];
                     characterFrame = new Rectangle(previousSlot.Bounds.Right, _menuLayout.ContentContainer.Top, slotSize, _menuLayout.ContentContainer.Height);
 
                 }
-                _charSlots.Add(new CharacterSlotUI(characterFrame, _font));
+                CharSlots.Add(new CharacterSlotUI(characterFrame, Context));
             }
 
             ButtonsEnabledManage();
         }
 
-        public void SetCharacterTexture(GameAssets assets)
-        {
-            _assets = assets;
-            foreach (var slot in _charSlots) 
-            { 
-                slot.SetTextures(assets);
-            }
-        }
-
         public List<Character> GetParty()
         {
-            return _charSlots.Where(x => x.Character is not null).Select(x => x.Character).ToList();
+            return CharSlots.Where(x => x.Character is not null).Select(x => x.Character).ToList();
         }
 
         private void ManageButtons()
         {
-            if (_charSlots.Any(x => x.Character is not null))
+            if (CharSlots.Any(x => x.Character is not null))
             {
                 _buttons.FirstOrDefault(x => x.Action == ScreenAction.StartGame).AllowInteraction();
             }
@@ -74,7 +65,7 @@ namespace MyMonoGame.MenuClasses
                 _buttons.FirstOrDefault(x => x.Action == ScreenAction.StartGame).DisallowInteraction();
             }
 
-            foreach (var slot in _charSlots)
+            foreach (var slot in CharSlots)
             {
                 if (slot.Character is null)
                 {
@@ -97,55 +88,65 @@ namespace MyMonoGame.MenuClasses
             foreach (var button in _buttons)
             {
                 button.Update();
-                if (button.IsClicked) 
+                if (button.GetClickedStatus()) 
                 {
                     if (button.Action == ScreenAction.GoToMainMenu) 
                     {
-                        foreach (var slot in _charSlots)
+                        foreach (var slot in CharSlots)
                         {
                             slot.Character = null;
                         }
-                        CurrentChar = null;
+                        // CurrentChar = null;
                     }
                     return button.Action;
                 }
             }
 
-            foreach (var slot in _charSlots)
+            foreach (var slot in CharSlots)
             {
                 slot.Update();
 
-                if (slot.CreateButton.IsClicked) 
+                _selectedSlotIndex = CharSlots.IndexOf(slot);
+                if (slot.CreateButton.GetClickedStatus()) 
                 {
-                    slot.Character = new Character();
-                    CurrentChar = slot.Character;
+                    // slot.Character = new Character();
+                    // CurrentChar = slot.Character;
                     return ScreenAction.GoToCharacterMenu;
                 }
-                else if (slot.ChangeButton.IsClicked)                
+                else if (slot.ChangeButton.GetClickedStatus())                
                 {
-                    CurrentChar = slot.Character;
+                    // CurrentChar = slot.Character;
                     return ScreenAction.GoToCharacterMenu;
                 }
-                else if (slot.DeleteButton.IsClicked)
+                else if (slot.DeleteButton.GetClickedStatus())
                 {
-                    CurrentChar = null;
+                    // CurrentChar = null;
                     slot.Character = null;
                 }
             }
             return ScreenAction.None;
         }
 
-        public override void Draw(SpriteBatch spriteBatch) 
+        public void SetCurrentChar(Character character)
         {
-            SetTitle(spriteBatch);
-            foreach (var button in _buttons) 
+            if (_selectedSlotIndex != -1)
             {
-                button.Draw(spriteBatch, _pixel);
+                CharSlots[_selectedSlotIndex].Character = character;
             }
-            foreach(var slot in _charSlots)
+        }
+
+        public Character GetCurrentChar()
+        {
+            return CharSlots[_selectedSlotIndex].Character;
+        }
+
+        public override void Draw() 
+        {
+            base.Draw();
+            foreach(var slot in CharSlots)
             {
                 // var charTexture = slot.Character is not null ? _assets.GetCharacterTexture(slot.Character) : null;
-                slot.Draw(spriteBatch, _pixel);
+                slot.Draw();
             }
         }
 

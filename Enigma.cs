@@ -12,12 +12,8 @@ namespace MyMonoGame
     public class Enigma : Game
     {
         private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
-        private SpriteFont _font;
+        public GameContext Context { get; private set; }
 
-        public GameAssets Assets { get; private set; }
-
-        private Texture2D _pixel;
         private BaseMenu<ScreenAction> _currentScreen;
         private MainMenuScreen _mainMenuScreen;
         private LoadGameMenu _loadGameMenu;
@@ -49,21 +45,22 @@ namespace MyMonoGame
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _font = Content.Load<SpriteFont>("DefaultFont");
-            // Content.Load<Texture2D>("Characters/human-female");
-            _pixel = new Texture2D(GraphicsDevice, 1, 1);
-            _pixel.SetData(new[] { Color.White });
-            Assets = new GameAssets(Content);
-            _mainMenuScreen = new MainMenuScreen("Main menu", GraphicsDevice.Viewport.Bounds, _font, _pixel);
-            _loadGameMenu = new LoadGameMenu("Load Game", GraphicsDevice.Viewport.Bounds, _font, _pixel);
-            _settingsMenu = new SettingsMenu("Settings", GraphicsDevice.Viewport.Bounds, _font, _pixel);
-            _aboutMenu = new AboutGameMenu("About game", GraphicsDevice.Viewport.Bounds, _font, _pixel);
-            _partyMenuScreen = new PartyMenuScreen("Party menu", GraphicsDevice.Viewport.Bounds, _font, _pixel);
-            _characterEditorScreen = new CharacterEditorScreen("Character menu", GraphicsDevice.Viewport.Bounds, _font, _pixel);
-            _exploringScreen = new ExploringScreen("Exploring", GraphicsDevice.Viewport.Bounds, _font, _pixel, Assets);
-            _characterEditorScreen.SetCharacterTexture(Assets);
-            _partyMenuScreen.SetCharacterTexture(Assets);
+            var spriteBatch = new SpriteBatch(GraphicsDevice);
+            var font = Content.Load<SpriteFont>("DefaultFont");
+            var pixel = new Texture2D(GraphicsDevice, 1, 1);
+            pixel.SetData(new[] { Color.White });
+            var assets = new GameAssets(Content);
+            Context = new GameContext(assets, font, pixel, spriteBatch);
+            Context.ScreenWidth = _defaultScreenWidth;
+            Context.ScreenHeight = _defaultScreenHeight;
+
+            _mainMenuScreen = new MainMenuScreen("Main menu", GraphicsDevice.Viewport.Bounds, Context);
+            _loadGameMenu = new LoadGameMenu("Load Game", GraphicsDevice.Viewport.Bounds, Context);
+            _settingsMenu = new SettingsMenu("Settings", GraphicsDevice.Viewport.Bounds, Context);
+            _aboutMenu = new AboutGameMenu("About game", GraphicsDevice.Viewport.Bounds, Context);
+            _partyMenuScreen = new PartyMenuScreen("Party menu", GraphicsDevice.Viewport.Bounds, Context);
+            _characterEditorScreen = new CharacterEditorScreen("Character menu", GraphicsDevice.Viewport.Bounds, Context);
+            _exploringScreen = new ExploringScreen("Exploring", GraphicsDevice.Viewport.Bounds, Context);
             // _exploringScreen.LoadContent(Assets);
             _currentScreen = _mainMenuScreen;
 
@@ -103,10 +100,12 @@ namespace MyMonoGame
                     _currentScreen = _settingsMenu;
                     break;
                 case ScreenAction.GoToCharacterMenu:
-                    _characterEditorScreen.LoadCharacter(_partyMenuScreen.CurrentChar);
+                    _characterEditorScreen.LoadCharacter(_partyMenuScreen.GetCurrentChar());
                     _currentScreen = _characterEditorScreen;
                     break;
                 case ScreenAction.SaveCharacter:
+                    _partyMenuScreen.SetCurrentChar(_characterEditorScreen.CurrentCharacter);
+                    _characterEditorScreen.CleanChar();
                     _currentScreen = _partyMenuScreen;
                     break;
                 case ScreenAction.StartGame:
@@ -128,10 +127,9 @@ namespace MyMonoGame
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            _spriteBatch.Begin();
-            _currentScreen.Draw(_spriteBatch);
-            _spriteBatch.End();
-
+            Context.SpriteBatch.Begin();
+            _currentScreen.Draw();
+            Context.SpriteBatch.End();
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);

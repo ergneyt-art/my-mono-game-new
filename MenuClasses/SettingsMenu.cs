@@ -11,7 +11,7 @@ namespace MyMonoGame.MenuClasses
 {
     public class SettingsMenu : BaseMenu<ScreenAction>
     {
-        public SettingsMenu(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : base(title, frame, font, pixel)
+        public SettingsMenu(string title, Rectangle frame, GameContext context) : base(title, frame, context)
         {
             _leftPanelCursor.SetPosition(_menuLayout.LeftPanel.Center.X - _defaultButtonWidth / 2, _menuLayout.LeftPanel.Top + _defaultSpacing);
             _leftPanelButtons.Add(AddButton("Back", ScreenAction.GoToMainMenu, _leftPanelCursor));
@@ -23,18 +23,14 @@ namespace MyMonoGame.MenuClasses
             foreach (var button in _buttons)
             {
                 button.Update();
-                if (button.IsClicked) return button.Action;
+                if (button.GetClickedStatus()) return button.Action;
             }
             return ScreenAction.None;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw()
         {
-            SetTitle(spriteBatch);
-            foreach (var button in _buttons)
-            {
-                button.Draw(spriteBatch, _pixel);
-            }
+            base.Draw();
         }
     }
 }

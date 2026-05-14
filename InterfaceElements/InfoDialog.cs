@@ -10,7 +10,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace MyMonoGame.InterfaceElements
 {
-    public class InfoDialog
+    public class InfoDialog : BaseElement
     {
         public string Message { get; private set; }
         public string Title { get; private set; }
@@ -37,28 +37,21 @@ namespace MyMonoGame.InterfaceElements
             AddDefaultButton = true,
         };
 
-        public InfoDialog(Rectangle frame, string title, SpriteFont font, string message, MenuLayoutConfig windowConfig = default) //  SpriteFont font, Rectangle frame
+        public InfoDialog(Rectangle bound, string title, GameContext context, string message, MenuLayoutConfig windowConfig = default) : base(bound, context) //  SpriteFont font, Rectangle frame
         {
             
             var config = windowConfig == default ? _defaultConfig : windowConfig;
-            _layout = new MenuLayout(frame, config);
+            _layout = new MenuLayout(bound, config);
             _titleCursor = new PanelCursor(_layout.HeaderContainer);
             _messageCursor = new PanelCursor(_layout.ContentContainer);
             _buttonsCursor = new PanelCursor(_layout.FooterContainer);
-            Font = font;
             Title = title;
             Message = message;
 
-            _titleCursor.SetPosition(_titleCursor.CurrentArea.Center.X - TextHelper.GetTextWidth(title, font) / 2, _titleCursor.CurrentArea.Top + 5);
-            var titleArea = _titleCursor.GetNextRect(Direction.Right, TextHelper.GetTextWidth(title, font), TextHelper.GetTextWidth(title, font));
-            TitleArea = new TextBlock(titleArea, title, font);
-            MessageArea = new TextBlock(_layout.ContentContainer, message, font);
-            /*
-            TextHelper.SplitText(message, font, _layout.ContentContainer.Width - 10).ForEach(line =>
-            {
-                _messageCursor.GetNextRect(Direction.Down, TextHelper.GetTextWidth(line, font), TextHelper.GetTextHeight(line, font));
-            });
-            */
+            _titleCursor.SetPosition(_titleCursor.CurrentArea.Center.X - TextHelper.GetTextWidth(title, Context.Font) / 2, _titleCursor.CurrentArea.Top + 5);
+            var titleArea = _titleCursor.GetNextRect(Direction.Right, TextHelper.GetTextWidth(title, Context.Font), TextHelper.GetTextHeight(title, Context.Font));
+            TitleArea = new TextBlock(titleArea, title, Context);
+            MessageArea = new TextBlock(_layout.ContentContainer, message, Context);
             _buttonsCursor.SetPosition(_buttonsCursor.CurrentArea.Left + 10, _buttonsCursor.CurrentArea.Top + 5);
             Buttons = new List<Button<InfoDialogResult>>();
 
@@ -77,7 +70,7 @@ namespace MyMonoGame.InterfaceElements
         public void AddButton(InfoDialogResult action, string text, int width = _defaultButtonWidth, int height = _defaultButtonHeight)
         {
             var rect = _buttonsCursor.GetNextRect(Direction.Right, width, height);
-            Buttons.Add(new Button<InfoDialogResult>(rect, action, text, Font));
+            Buttons.Add(new Button<InfoDialogResult>(rect, action, text, Context));
         }
 
         public void Open()
@@ -97,7 +90,7 @@ namespace MyMonoGame.InterfaceElements
                 foreach (var button in Buttons)
                 {
                     button.Update();
-                    if (button.IsClicked)
+                    if (button.GetClickedStatus())
                     {
                         // IsOpen = false;
                         return button.Action;
@@ -107,27 +100,16 @@ namespace MyMonoGame.InterfaceElements
             return InfoDialogResult.None;
         }
 
-        public void Draw(SpriteBatch spriteBatch, SpriteFont font, Texture2D pixel)
+        public override void Draw()
         {
             // Draw background
-            spriteBatch.Draw(pixel, _layout.Screen, Color.Black * 0.8f);
+            Context.SpriteBatch.Draw(Context.Pixel, _layout.Screen, Color.Black * 0.8f);
 
-            TitleArea.Draw(spriteBatch);
-            MessageArea.Draw(spriteBatch);
-            /*
-            // Draw title
-            Vector2 titleSize = font.MeasureString(Title);
-            Vector2 titlePosition = new Vector2(_layout.ContentContainer.Center.X - titleSize.X / 2, _layout.ContentContainer.Top + 20);
-            spriteBatch.DrawString(font, Title, titlePosition, Color.White);
-            // Draw message
-            Vector2 messageSize = font.MeasureString(Message);
-            Vector2 messagePosition = new Vector2(_layout.ContentContainer.Center.X - messageSize.X / 2, _layout.ContentContainer.Center.Y - messageSize.Y / 2);
-            spriteBatch.DrawString(font, Message, messagePosition, Color.White);
-            */
-            // Draw buttons
+            TitleArea.Draw();
+            MessageArea.Draw();
             foreach (var button in Buttons)
             {
-                button.Draw(spriteBatch, pixel);
+                button.Draw();
             }
         }
 

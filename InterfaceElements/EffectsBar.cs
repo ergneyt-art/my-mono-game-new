@@ -16,11 +16,10 @@ namespace MyMonoGame.InterfaceElements
         private PanelCursor Cursor;
         private GameAssets Assets;
 
-        public EffectsBar(Rectangle bounds, SpriteFont font, GameAssets assets) : base(bounds, font)
+        public EffectsBar(Rectangle bounds, GameContext context) : base(bounds, context)
         {
             Effects = new Dictionary<CharacterStatus, ActiveIcon>();
             Cursor = new PanelCursor(Bounds);
-            Assets = assets;
         }
 
         public void SetEffects(List<CharacterStatus> activeEffects)
@@ -38,7 +37,7 @@ namespace MyMonoGame.InterfaceElements
             if (!this.Effects.ContainsKey(effect))
             {
                 var iconRect = Cursor.GetNextRect(Direction.Right, 20, 20, 2); // TO DO: This is a bit hacky, we should probably have a better way to manage the cursor position for the icons
-                var effectIcon = new ActiveIcon(iconRect, Font);
+                var effectIcon = new ActiveIcon(iconRect, Context);
                 effectIcon.SetTexture(Assets.GetStatusTexture(effect));
                 this.Effects[effect] = effectIcon;
             }
@@ -53,14 +52,14 @@ namespace MyMonoGame.InterfaceElements
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Texture2D pixel = null)
+        public override void Draw()
         {
             if (IsVisible)
             {
-                base.Draw(spriteBatch, pixel);
+                base.Draw();
                 foreach (var icon in Effects)
                 {
-                    icon.Value.Draw(spriteBatch, pixel);
+                    icon.Value.Draw();
                 }
             }
         }

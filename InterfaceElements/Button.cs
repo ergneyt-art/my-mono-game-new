@@ -25,14 +25,25 @@ namespace MyMonoGame.InterfaceElements
 
         private MouseState _previousMouse;
 
-        public Button(Rectangle bounds, T action, string text, SpriteFont font) : base(bounds, font)
+        public Button(Rectangle bounds, T action, string text, GameContext context) : base(bounds, context)
         {
             Text = text;
-            _textPosition = TextHelper.RecalculateTextPosition(Text, Bounds, Font);
+            _textPosition = TextHelper.RecalculateTextPosition(Text, Bounds, Context.Font);
             Action = action;
         }
 
-
+        public bool GetClickedStatus()
+        {
+            if (IsClicked)
+            {
+                IsClicked = false;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         public void Update() 
         {
@@ -54,7 +65,7 @@ namespace MyMonoGame.InterfaceElements
             IsClicked = false;
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Texture2D pixel)
+        public override void Draw()
         {
             if (IsVisible)
             {
@@ -67,8 +78,8 @@ namespace MyMonoGame.InterfaceElements
                 {
                     color = ButtonHoverdColor;
                 }
-                spriteBatch.Draw(pixel, Bounds, color);
-                spriteBatch.DrawString(Font, Text, _textPosition, TextColor);
+                Context.SpriteBatch.Draw(Context.Pixel, Bounds, color);
+                Context.SpriteBatch.DrawString(Context.Font, Text, _textPosition, TextColor);
                 /*
                 if (IsHovered && this.Tooltip != null && this.Tooltip.IsShow)
                 {

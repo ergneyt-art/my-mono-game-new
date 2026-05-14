@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MyMonoGame.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace MyMonoGame.InterfaceElements
         KeyboardState _previousKeyboard;
         MouseState _previousMouse;
 
-        public InputField(Rectangle bound, SpriteFont font) : base(bound, font)
+        public InputField(Rectangle bound, GameContext context) : base(bound, context)
         {
             Text = string.Empty;
         }
@@ -67,27 +68,19 @@ namespace MyMonoGame.InterfaceElements
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, Texture2D texture)
+        public override void Draw()
         {
             if (!IsVisible) return;
             if (IsActive)
             {
-                spriteBatch.Draw(texture, Bounds, Color.White);
+                Context.SpriteBatch.Draw(Context.Pixel, Bounds, Color.White);
             }
             else
             {
-                spriteBatch.Draw(texture, Bounds, Color.Gray);
+                Context.SpriteBatch.Draw(Context.Pixel, Bounds, Color.Gray);
             }
-            Vector2 textPosition = RecalculateTextPosition(Text, Font);
-            spriteBatch.DrawString(Font, Text, textPosition, Color.Black);
-        }
-
-        private Vector2 RecalculateTextPosition(string text, SpriteFont font)
-        {
-            Vector2 size = font.MeasureString(text);
-            float x_axis = Bounds.X + Bounds.Width / 2 - size.X / 2;
-            float y_axis = Bounds.Y + Bounds.Height / 2 - size.Y / 2;
-            return new Vector2(x_axis, y_axis);
+            Vector2 textPosition = TextHelper.RecalculateTextPosition(Text, Bounds, Context.Font);
+            Context.SpriteBatch.DrawString(Context.Font, Text, textPosition, Color.Black);
         }
     }
 }

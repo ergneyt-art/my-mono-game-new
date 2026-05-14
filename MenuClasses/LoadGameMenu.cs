@@ -13,45 +13,34 @@ namespace MyMonoGame.MenuClasses
     
     public class LoadGameMenu : BaseMenu<ScreenAction>
     {
-        protected ActiveIcon[,] TestGrid;
-        public LoadGameMenu(string title, Rectangle frame, SpriteFont font, Texture2D pixel) : base(title, frame, font, pixel)
+        protected ActiveGrid Grids;
+        public LoadGameMenu(string title, Rectangle frame, GameContext context) : base(title, frame, context)
         {
             _leftPanelCursor.SetPosition(_menuLayout.LeftPanel.Center.X - _defaultButtonWidth / 2, _menuLayout.LeftPanel.Top + _defaultSpacing);
             _leftPanelButtons.Add(AddButton("Back", ScreenAction.GoToMainMenu, _leftPanelCursor));
-            TestGrid = _menuLayout.GetGrids(_menuLayout.ContentContainer, _font);
+            Grids = new ActiveGrid(_menuLayout.ContentContainer, Context);
             // _leftPanelButtons[0].TooltipText = "test tip";
         }
 
         public override ScreenAction Update()
         {
             ButtonsEnabledManage();
-            foreach (var grid in TestGrid)
-            {
-                grid.Update();
-            }
+            Grids.Update();
 
             foreach (var button in _buttons)
             {
                 button.Update();
-                if (button.IsClicked) return button.Action;
+                if (button.GetClickedStatus()) return button.Action;
             }
             return ScreenAction.None;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw()
         {
-            SetTitle(spriteBatch);
-            foreach (var button in _buttons)
+            base.Draw();
+            if (Grids != null)
             {
-                button.Draw(spriteBatch, _pixel);
-            }
-
-            if (TestGrid != null)
-            {
-                foreach (var grid in TestGrid)
-                {
-                    grid.Draw(spriteBatch, _pixel);
-                }
+                Grids.Draw();
             }
         }
     }

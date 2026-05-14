@@ -14,19 +14,19 @@ namespace MyMonoGame.InterfaceElements
     {
         public string Text { get; set; } = string.Empty;
 
-        public TextBlock(Rectangle bounds, string text, SpriteFont font) : base(bounds, font)
+        public TextBlock(Rectangle bounds, string text, GameContext context) : base(bounds, context)
         {
             Text = text;
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Texture2D pixel = null)
+        public override void Draw()
         {
-            var text = TextHelper.SplitText(Text, Font, Bounds.Width);
-            var textSize = Font.MeasureString(Text);
+            var text = TextHelper.SplitText(Text, Context.Font, Bounds.Width);
+            var textSize = Context.Font.MeasureString(Text);
             var counter = 0;
             foreach (var item in text) 
             {
-                spriteBatch.DrawString(Font, item, new Vector2(Bounds.X, Bounds.Y + (textSize.Y * counter)), Color.White);
+                Context.SpriteBatch.DrawString(Context.Font, item, new Vector2(Bounds.X, Bounds.Y + (textSize.Y * counter)), Color.White);
                 counter++;
             }
         }

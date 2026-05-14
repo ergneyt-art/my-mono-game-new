@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MyMonoGame.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,17 +13,17 @@ namespace MyMonoGame.InterfaceElements
     {
         // public Rectangle Bounds { get; set; }
         public string Text { get; set; }
-        public ToolTip(string text, SpriteFont font) : base(new Rectangle(0, 0, 0, 0), font)
+        public ToolTip(string text, GameContext context) : base(new Rectangle(0, 0, 0, 0), context)
         {
             Text = text;
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Texture2D texture)
+        public override void Draw()
         {
             if (IsVisible)
             {
-                spriteBatch.Draw(texture, Bounds, Color.Black * 0.7f);
-                spriteBatch.DrawString(Font, Text, new Vector2(Bounds.X + 5, Bounds.Y + 5), Color.White);
+                Context.SpriteBatch.Draw(Context.Pixel, Bounds, Color.Black * 0.7f);
+                Context.SpriteBatch.DrawString(Context.Font, Text, new Vector2(Bounds.X + 5, Bounds.Y + 5), Color.White);
             }
         }
     }

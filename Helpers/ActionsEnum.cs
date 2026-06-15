@@ -52,4 +52,15 @@ namespace MyMonoGame.Helpers
         No,
         Cancel
     }
+
+    public enum MenuLayoutArea
+    {
+        Screen,
+        Header,
+        Body,
+        Content,
+        Footer,
+        LeftPanel,
+        RightPanel
+    }
 }

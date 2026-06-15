@@ -11,8 +11,14 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace MyMonoGame.InterfaceElements
 {
+    /// <summary>
+    /// Base class for visible interface elements with bounds and shared context.
+    /// </summary>
     public abstract class BaseElement
     {
+        /// <summary>
+        /// Area occupied by this element.
+        /// </summary>
         public Rectangle Bounds { get; set; }
         protected bool IsVisible = true;
         protected GameContext Context;
@@ -23,19 +29,31 @@ namespace MyMonoGame.InterfaceElements
             this.Context = context;
         }
 
+        /// <summary>
+        /// Hides the element from rendering.
+        /// </summary>
         public virtual void Hide()
         {
             IsVisible = false;
         }
 
+        /// <summary>
+        /// Shows the element for rendering.
+        /// </summary>
         public virtual void Show() 
         {
             IsVisible = true;
         }
 
+        /// <summary>
+        /// Draws the element using resources from GameContext.
+        /// </summary>
         public abstract void Draw();
     }
 
+    /// <summary>
+    /// Base class for interface elements that can react to mouse interaction.
+    /// </summary>
     public abstract class BaseActiveElement : BaseElement
     {
         protected bool IsEnabled = true;
@@ -46,6 +64,9 @@ namespace MyMonoGame.InterfaceElements
 
         }
 
+        /// <summary>
+        /// Updates IsHovered based on the current mouse position.
+        /// </summary>
         protected virtual void UpdateHoveredState()
         {
             if (IsVisible && IsEnabled)
@@ -64,16 +85,25 @@ namespace MyMonoGame.InterfaceElements
             // Base drawing logic can be implemented here, or in derived classes
         }
 
+        /// <summary>
+        /// Allows this element to react to user input.
+        /// </summary>
         public void AllowInteraction()
         {
             IsEnabled = true;
         }
 
+        /// <summary>
+        /// Prevents this element from reacting to user input.
+        /// </summary>
         public void DisallowInteraction()
         {
             IsEnabled = false;
         }
 
+        /// <summary>
+        /// Toggles whether this element can react to user input.
+        /// </summary>
         public void ToggleInteraction()
         {
             IsEnabled = !IsEnabled;
@@ -92,8 +122,14 @@ namespace MyMonoGame.InterfaceElements
         }
     }
 
+    /// <summary>
+    /// Base class for active elements that can display a tooltip while hovered.
+    /// </summary>
     public abstract class BaseElementWithTooltip : BaseActiveElement
     {
+        /// <summary>
+        /// Text shown in the tooltip when the element is hovered.
+        /// </summary>
         public string? TooltipText;
         protected ToolTip Tooltip;
         protected BaseElementWithTooltip(Rectangle bounds, GameContext context, string? tooltipText = null) : base(bounds, context)
@@ -109,6 +145,14 @@ namespace MyMonoGame.InterfaceElements
             {
                 this.Tooltip.Draw();
             }
+        }
+
+        /// <summary>
+        /// Updates hover and tooltip state.
+        /// </summary>
+        public virtual void Update()
+        {
+            this.UpdateHoveredState();
         }
 
         protected override void UpdateHoveredState()
@@ -132,11 +176,11 @@ namespace MyMonoGame.InterfaceElements
                 if (Tooltip == null)
                 {
                     Tooltip = new ToolTip(this.TooltipText, Context);
-                    TryToFindPlaceForToolTip();
                 }
 
                 if (IsHovered)
                 {
+                    TryToFindPlaceForToolTip();
                     Tooltip.Show();
                 }
                 else
@@ -150,7 +194,7 @@ namespace MyMonoGame.InterfaceElements
         {
             var mouse = Mouse.GetState();
             var tooltipSize = Context.Font.MeasureString(this.TooltipText);
-            var screenBounds = new Rectangle(0, 0, 1280, 800); // TODO: Get actual screen size
+            var screenBounds = new Rectangle(0, 0, Context.ScreenWidth, Context.ScreenHeight); // TODO: Get actual screen size
             var tooltipBounds = new Rectangle(mouse.X, mouse.Y, (int)tooltipSize.X + 10, (int)tooltipSize.Y + 10);
             if (!screenBounds.Contains(tooltipBounds))
             {

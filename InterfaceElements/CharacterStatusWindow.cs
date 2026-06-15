@@ -40,8 +40,11 @@ namespace MyMonoGame.InterfaceElements
             CurrentEffects.SetEffects(character.CharacterEffects);
         }
 
-
-
+        public void Update()
+        {
+            Icon.Update();
+            CurrentEffects.Update();
+        }
 
         public override void Draw()
         {

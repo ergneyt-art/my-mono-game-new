@@ -45,6 +45,8 @@ namespace MyMonoGame.GameObjects
 
         public void SetStartingParams() 
         {
+            CharacterEffects.Add(CharacterStatus.Poison);
+            CharacterEffects.Add(CharacterStatus.Burn);
             switch (Class)
             {
                 case CharacterClass.Warrior:

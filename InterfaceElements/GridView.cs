@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace MyMonoGame.InterfaceElements
 {
-    public class ActiveGrid : BaseElement
+    public class GridView : BaseElement
     {
         public ActiveIcon[,] Grids { get; private set; }
         private const int DefRowsCount = 10;
         private const int DefColumnsCount = 10;
 
-        public ActiveGrid(Rectangle bounds, GameContext context, int rows = DefRowsCount, int columns = DefColumnsCount) : base(bounds, context)
+        public GridView(Rectangle bounds, GameContext context, int rows = DefRowsCount, int columns = DefColumnsCount) : base(bounds, context)
         {
             Grids = new ActiveIcon[rows, columns];
             var cellWidth = bounds.Width / columns;
-            var cellHeight = bounds.Height / columns;
+            var cellHeight = bounds.Height / rows;
             for (int i = 0; i < Grids.GetLength(0); i++)
             {
                 for (int j = 0; j < Grids.GetLength(1); j++)

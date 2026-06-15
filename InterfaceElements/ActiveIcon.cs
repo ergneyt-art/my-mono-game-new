@@ -17,9 +17,9 @@ namespace MyMonoGame.InterfaceElements
 
         }
 
-        public void Update()
+        public override void Update()
         {
-             UpdateHoveredState();
+            base.Update();
         }
 
         public void SetTexture(Texture2D texture)

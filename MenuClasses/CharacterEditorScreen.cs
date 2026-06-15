@@ -22,25 +22,10 @@ namespace MyMonoGame.MenuClasses
         private TextBlock _genderInfo;
         private InputField _characterName;
         private Texture2D _charTexture;
-        private readonly MenuLayoutConfig screenConfig = new MenuLayoutConfig
-        {
-            ProcentFrame = 1,
-            HeaderContainerHeight = 0.1,
-            FootContainerHeight = 0.1,
-            LeftPanelWidth = 0.25,
-            RightPanelWidth = 0.25,
-            ContentContainerWidth = 0.5
-        };
+
 
         public CharacterEditorScreen(string title, Rectangle frame, GameContext context) :
-            base(title, new MenuLayoutConfig{
-                ProcentFrame = 1,
-                HeaderContainerHeight = 0.1,
-                FootContainerHeight = 0.1,
-                LeftPanelWidth = 0.25,
-                RightPanelWidth = 0.25,
-                ContentContainerWidth = 0.5
-            }, frame, context)
+            base(title, ScreenConfigs.GetCharacterEditorScreenConfig(), frame, context)
         {
             _leftPanelCursor.SetPosition(_menuLayout.LeftPanel.Center.X - _defaultButtonWidth / 2, _menuLayout.LeftPanel.Top + _defaultSpacing);
             _leftPanelButtons.Add(AddButton("Back", ScreenAction.GoToPartyMenu, _leftPanelCursor));

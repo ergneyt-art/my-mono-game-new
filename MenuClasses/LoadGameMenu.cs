@@ -13,12 +13,12 @@ namespace MyMonoGame.MenuClasses
     
     public class LoadGameMenu : BaseMenu<ScreenAction>
     {
-        protected ActiveGrid Grids;
+        protected GridView Grids;
         public LoadGameMenu(string title, Rectangle frame, GameContext context) : base(title, frame, context)
         {
             _leftPanelCursor.SetPosition(_menuLayout.LeftPanel.Center.X - _defaultButtonWidth / 2, _menuLayout.LeftPanel.Top + _defaultSpacing);
             _leftPanelButtons.Add(AddButton("Back", ScreenAction.GoToMainMenu, _leftPanelCursor));
-            Grids = new ActiveGrid(_menuLayout.ContentContainer, Context);
+            Grids = new GridView(_menuLayout.ContentContainer, Context);
             // _leftPanelButtons[0].TooltipText = "test tip";
         }
 

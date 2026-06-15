@@ -29,5 +29,13 @@ namespace MyMonoGame.GameObjects
             { CharacterGender.Male, "Male" },
             { CharacterGender.Female, "Female" }
         };
+
+        public static Dictionary<CharacterStatus, string> StatusesDescription = new Dictionary<CharacterStatus, string>
+        {
+            { CharacterStatus.Poison, "Poisoned: Gradually loses health over time." },
+            // { CharacterStatus.Stunned, "Stunned: Unable to move or act for a short duration." },
+            { CharacterStatus.Burn, "Burning: Takes damage over time and has a chance to spread the fire to nearby enemies." },
+            { CharacterStatus.Freeze, "Frozen: Immobilized and takes increased damage from physical attacks." }
+        };
     }
 }

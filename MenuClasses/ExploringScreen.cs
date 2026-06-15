@@ -53,6 +53,7 @@ namespace MyMonoGame.MenuClasses
             foreach (var item in partyMapping)
             {
                 item.Value.UpdateStatus(item.Key);
+                item.Value.Update();
             }
 
             foreach (var button in _buttons)

@@ -9,14 +9,44 @@ using System.Threading.Tasks;
 
 namespace MyMonoGame.Helpers
 {
+    /// <summary>
+    /// Splits a screen or window rectangle into common menu regions.
+    /// </summary>
     public class MenuLayout
     {
+        /// <summary>
+        /// Root rectangle used by this layout after applying ProcentFrame.
+        /// </summary>
         public Rectangle Screen;
+
+        /// <summary>
+        /// Top region usually used for a title.
+        /// </summary>
         public Rectangle HeaderContainer;
+
+        /// <summary>
+        /// Bottom region usually used for action buttons.
+        /// </summary>
         public Rectangle FooterContainer;
+
+        /// <summary>
+        /// Middle region between header and footer.
+        /// </summary>
         public Rectangle Body;
+
+        /// <summary>
+        /// Main region between left and right panels.
+        /// </summary>
         public Rectangle ContentContainer;
+
+        /// <summary>
+        /// Left side panel inside the body.
+        /// </summary>
         public Rectangle LeftPanel;
+
+        /// <summary>
+        /// Right side panel inside the body.
+        /// </summary>
         public Rectangle RightPanel;
 
         private readonly MenuLayoutConfig _defaultConfig = new MenuLayoutConfig
@@ -29,17 +59,14 @@ namespace MyMonoGame.Helpers
             ContentContainerWidth = 0.7
         };
 
+        /// <summary>
+        /// Configuration used to calculate this layout.
+        /// </summary>
         public MenuLayoutConfig Config;
 
-        public int LeftPanelCurrentX = 0;
-        public int LeftPanelCurrentY = 0;
-
-        public int RightPanelCurrentX = 0;
-        public int RightPanelCurrentY = 0;
-
-        public int ContentContainerCurrentX = 0;
-        public int ContentContainerCurrentY = 0;
-
+        /// <summary>
+        /// Creates a layout for the given frame.
+        /// </summary>
         public MenuLayout(Rectangle frame, MenuLayoutConfig config = default)
         {
             if (config == default) 
@@ -82,22 +109,62 @@ namespace MyMonoGame.Helpers
             RightPanel = new Rectangle(Body.Right - rightPanelWidth, Body.Top, rightPanelWidth, Body.Height);
 
             ContentContainer = new Rectangle(LeftPanel.Right, Body.Top, RightPanel.Left - LeftPanel.Right, Body.Height);
+        }
 
-            LeftPanelCurrentY = LeftPanel.Top;
-            RightPanelCurrentY = RightPanel.Top;
-            ContentContainerCurrentX = ContentContainer.Left;
-            ContentContainerCurrentY = ContentContainer.Top;
+        public PanelCursor GetCursor(MenuLayoutArea area)
+        {
+            return area switch
+            {
+                MenuLayoutArea.Screen => new PanelCursor(Screen),
+                MenuLayoutArea.Header => new PanelCursor(HeaderContainer),
+                MenuLayoutArea.Body => new PanelCursor(Body),
+                MenuLayoutArea.Content => new PanelCursor(ContentContainer),
+                MenuLayoutArea.Footer => new PanelCursor(FooterContainer),
+                MenuLayoutArea.LeftPanel => new PanelCursor(LeftPanel),
+                MenuLayoutArea.RightPanel => new PanelCursor(RightPanel),
+                _ => throw new ArgumentException("Invalid MenuLayoutArea")
+            };
         }
     }
 
+    /// <summary>
+    /// Percentage-based configuration for MenuLayout regions.
+    /// </summary>
     public class MenuLayoutConfig
     {
+        /// <summary>
+        /// Portion of the provided frame used by the layout.
+        /// </summary>
         public double ProcentFrame;
+
+        /// <summary>
+        /// Header height as a fraction of the screen height.
+        /// </summary>
         public double HeaderContainerHeight;
+
+        /// <summary>
+        /// Content width as a fraction of the body width.
+        /// </summary>
         public double ContentContainerWidth;
+
+        /// <summary>
+        /// Footer height as a fraction of the screen height.
+        /// </summary>
         public double FootContainerHeight;
+
+        /// <summary>
+        /// Left panel width as a fraction of the body width.
+        /// </summary>
         public double LeftPanelWidth;
+
+        /// <summary>
+        /// Right panel width as a fraction of the body width.
+        /// </summary>
         public double RightPanelWidth;
+
+        /// <summary>
+        /// Indicates whether a dialog using this config should create default buttons.
+        /// </summary>
         public bool AddDefaultButton;
     }
 

@@ -13,6 +13,9 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace MyMonoGame.MenuClasses
 {
+    /// <summary>
+    /// Common base class for menu-like screens that return actions from UI input.
+    /// </summary>
     public abstract class BaseMenu<T> where T : Enum
     {
         protected string Title;
@@ -32,6 +35,9 @@ namespace MyMonoGame.MenuClasses
         protected const int _defaultButtonHeight = 50;
         protected InfoDialog _infoDialog;
 
+        /// <summary>
+        /// Creates a menu with a custom layout configuration.
+        /// </summary>
         public BaseMenu(string title, MenuLayoutConfig screenConfig, Rectangle frame, GameContext context)
         {
             Title = title;
@@ -41,11 +47,14 @@ namespace MyMonoGame.MenuClasses
             _leftPanelButtons = new List<Button<T>>();
             _centerPanelButtons = new List<Button<T>>();
             _rightPanelButtons = new List<Button<T>>();
-            _leftPanelCursor = new PanelCursor(_menuLayout.LeftPanel);
-            _centerPanelCursor = new PanelCursor(_menuLayout.ContentContainer);
-            _rightPanelCursor = new PanelCursor(_menuLayout.RightPanel);
+            _leftPanelCursor = _menuLayout.GetCursor(MenuLayoutArea.LeftPanel);
+            _centerPanelCursor = _menuLayout.GetCursor(MenuLayoutArea.Content);
+            _rightPanelCursor = _menuLayout.GetCursor(MenuLayoutArea.RightPanel);
         }
 
+        /// <summary>
+        /// Creates a menu with the default layout configuration.
+        /// </summary>
         public BaseMenu(string title, Rectangle frame, GameContext context)
         {
             Title = title;
@@ -60,6 +69,9 @@ namespace MyMonoGame.MenuClasses
             _rightPanelCursor = new PanelCursor(_menuLayout.RightPanel);
         }
 
+        /// <summary>
+        /// Enables or disables menu buttons depending on modal dialog state.
+        /// </summary>
         virtual protected void ButtonsEnabledManage()
         {
             if (_infoDialog != null && _infoDialog.IsOpen) 
@@ -78,8 +90,14 @@ namespace MyMonoGame.MenuClasses
             }
         }
 
+        /// <summary>
+        /// Updates this menu and returns the requested screen action.
+        /// </summary>
         abstract public ScreenAction Update();
 
+        /// <summary>
+        /// Draws the menu title, buttons, and active dialog if present.
+        /// </summary>
         virtual public void Draw()
         {
             SetTitle(Context.SpriteBatch);
@@ -95,6 +113,9 @@ namespace MyMonoGame.MenuClasses
 
         #region Button management methods
 
+        /// <summary>
+        /// Hides buttons that belong to the right panel.
+        /// </summary>
         public void HideRightPanelButtons()
         {
             foreach (var button in _rightPanelButtons)
@@ -106,6 +127,9 @@ namespace MyMonoGame.MenuClasses
             }
         }
 
+        /// <summary>
+        /// Hides buttons that belong to the left panel.
+        /// </summary>
         public void HideLeftPanelButtons()
         {
             foreach (var button in _leftPanelButtons)
@@ -117,6 +141,9 @@ namespace MyMonoGame.MenuClasses
             }
         }
 
+        /// <summary>
+        /// Hides buttons that belong to the content panel.
+        /// </summary>
         public void HideCenterPanelButtons()
         {
             foreach (var button in _centerPanelButtons)
@@ -128,6 +155,9 @@ namespace MyMonoGame.MenuClasses
             }
         }
 
+        /// <summary>
+        /// Hides every button owned by the menu.
+        /// </summary>
         public void HideAllButtons()
         {
             foreach (var button in _buttons)
@@ -144,6 +174,9 @@ namespace MyMonoGame.MenuClasses
             }
         }
 
+        /// <summary>
+        /// Creates a button using the provided cursor and stores it in the main button list.
+        /// </summary>
         protected Button<T> AddButton(string text, T action, PanelCursor panelCursor, Direction direction = Direction.Down, int width = _defaultButtonWidth, int height = _defaultButtonHeight, int spacing = _defaultSpacing)
         {
             var rect = panelCursor.GetNextRect(direction, width, height, spacing);
@@ -152,6 +185,9 @@ namespace MyMonoGame.MenuClasses
             return button;
         }
 
+        /// <summary>
+        /// Adds a button to the left panel and tracks it in the left button group.
+        /// </summary>
         protected void AddButtonToLeftPanel(string label, T action, Direction direction = Direction.Down, int width = _defaultButtonWidth, int height = _defaultButtonHeight, int spacing = _defaultSpacing)
         {
             UpdateCursorPosition(_leftPanelButtons, _leftPanelCursor, _menuLayout.LeftPanel, direction, width, height, spacing);
@@ -161,6 +197,9 @@ namespace MyMonoGame.MenuClasses
             _buttons.Add(button);
         }
 
+        /// <summary>
+        /// Adds a button to the right panel and tracks it in the right button group.
+        /// </summary>
         protected void AddButtonToRightPanel(string label, T action, Direction direction = Direction.Down, int width = _defaultButtonWidth, int height = _defaultButtonHeight, int spacing = _defaultSpacing)
         {
             UpdateCursorPosition(_rightPanelButtons, _rightPanelCursor, _menuLayout.RightPanel, direction, width, height, spacing);
@@ -170,6 +209,9 @@ namespace MyMonoGame.MenuClasses
             _buttons.Add(button);
         }
 
+        /// <summary>
+        /// Adds a button to the content panel and tracks it in the center button group.
+        /// </summary>
         protected void AddButtonToCenterPanel(string label, T action, Direction direction = Direction.Down, int width = _defaultButtonWidth, int height = _defaultButtonHeight, int spacing = _defaultSpacing)
         {
             UpdateCursorPosition(_centerPanelButtons, _centerPanelCursor, _menuLayout.ContentContainer, direction, width, height, spacing);
